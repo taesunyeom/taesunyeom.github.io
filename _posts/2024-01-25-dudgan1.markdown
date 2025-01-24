@@ -1,0 +1,14 @@
+---
+layout: post
+title:  "DuDGAN: Improving Class-Conditional GANs via Dual-Diffusion"
+date:   2024-01-25 01:34:51 +0900
+image: /images/dudgan.jpeg
+categories: research
+author: "Taesun Yeom"
+authors: "<strong>Taesun Yeom</strong>, Chanhoe Gu, and Minhyeok Lee"
+venue: "IEEE Access"
+arxiv: https://ieeexplore.ieee.org/document/10458911/
+code: https://github.com/taesunyeom/DuDGAN
+# website: https://leonidk.github.io/fmb-plus
+---
+We propose a dual-diffusion process, which aims to reduce overfitting of class-conditional GANs.

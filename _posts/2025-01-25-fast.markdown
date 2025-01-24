@@ -1,0 +1,14 @@
+---
+layout: post
+title:  "Fast Training of Sinusoidal Neural Fields vis Scaling Initialization"
+date:   2025-01-25 01:19:15 +0900
+image: /images/fast.jpg
+categories: research
+author: "Taesun Yeom"
+authors: "<strong>Taesun Yeom*</strong>, Sangyoon Lee*, and Jaeho Lee"
+venue: "International Conference on Learning Representations (ICLR)"
+arxiv: https://arxiv.org/abs/2308.14737
+# code: https://github.com/leonidk/fmb-plus
+website: https://leonidk.github.io/fmb-plus
+---
+We propose a simple yet effective approach for accelerating neural field training.
