@@ -7,7 +7,7 @@ categories: research
 author: "Taesun Yeom"
 authors: "<strong>Taesun Yeom</strong>, Chanhoe Gu, and Minhyeok Lee"
 venue: "IEEE Access"
-arxiv: https://ieeexplore.ieee.org/document/10458911/
+paper: https://ieeexplore.ieee.org/document/10458911/
 code: https://github.com/taesunyeom/DuDGAN
 # website: https://leonidk.github.io/fmb-plus
 ---

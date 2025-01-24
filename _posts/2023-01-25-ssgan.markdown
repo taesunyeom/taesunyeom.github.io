@@ -7,8 +7,8 @@ categories: research
 author: "Taesun Yeom"
 authors: "Kanghyeok Ko, <strong>Taesun Yeom</strong>, and Minhyeok Lee"
 venue: "Neural Networks"
-arxiv: https://www.sciencedirect.com/science/article/pii/S0893608023001144
+paper: https://www.sciencedirect.com/science/article/pii/S0893608023001144
 # code: https://github.com/leonidk/fmb-plus
-# website: https://leonidk.github.io/fmb-plus
+code: https://github.com/taesunyeom/SuperstarGAN
 ---
 Training GANs in large-scale conditional domains.

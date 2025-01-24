@@ -34,9 +34,8 @@
               <h1>
                 Taesun Yeom
               </h1>
-              <!-- 소개문구 가운데 배치 및 왼쪽 정렬 -->
               <p style="text-align: left; display: inline-block; margin: 0 auto; max-width: 600px;">
-                I'm a graduate student at EffL (Efficient learning lab), POSTECH. My research interests lie in both the theoretical and practical aspects of ML/DL, particularly in neural fields, implicit bias, and learning dynamics.
+                I'm a first-year M.S.-Ph.D. student at <a href="https://effl.postech.ac.kr" target="_blank">EffL (Efficient Learning Lab)</a>, POSTECH. My research interests encompass both the theoretical aspects of deep learning and its practical applications, particularly in neural fields, implicit bias of gradient descent, complexity of neural nets, and learning dynamics. Feel free to reach out if you’re interested in collaborating on any of these research topics.
               </p>
             
               <p style="text-align:center">
@@ -55,15 +54,13 @@
         <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
           <tr>
             <td style="padding:2.5%;width:100%;vertical-align:middle">
-              <!-- <h2>Research</h2> -->
-              <!-- <p> -->
-                <!-- I'm interested in computer vision, machine learning, optimization, graphics and robotics. -->
-              <!-- </p> -->
+              <h2>Publications</h2>
             </td>
           </tr>
         </table>
         <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
 
+          
           {% for post in site.posts %}
           {% for cat in post.categories %}
           {% if cat == 'research' %}
@@ -81,6 +78,9 @@
               <br>
               {% if post.arxiv %}
               <a href="{{post.arxiv}}">arxiv</a> /
+              {% endif %}
+              {% if post.paper %}
+              <a href="{{post.paper}}">paper</a> /
               {% endif %}
               {% if post.video %}
               <a href="{{post.video}}">video</a> /
@@ -100,6 +100,9 @@
               {% if post.youtube %}
               <a href="{{post.youtube}}">youtube</a> /
               {% endif %}
+              {% if post.openreview %}
+              <a href="{{post.oprenreview}}">openreview</a> /
+              {% endif %}
               <p></p>
               {{ post.excerpt }}
             </td>
@@ -112,7 +115,7 @@
         <br>
         <br>
 
-        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+        <!-- <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
           <tr>
             <td style="padding:2.5%;width:100%;vertical-align:middle">
               <h2>Miscs</h2>
@@ -175,7 +178,7 @@
           {% endif %}
           {% endfor %}
           {% endfor %}
-        </table>
+        </table> -->
 
         <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
           <tr>

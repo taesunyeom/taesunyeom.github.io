@@ -9,6 +9,6 @@ authors: "<strong>Taesun Yeom*</strong>, Sangyoon Lee*, and Jaeho Lee"
 venue: "International Conference on Learning Representations (ICLR)"
 arxiv: https://arxiv.org/abs/2308.14737
 # code: https://github.com/leonidk/fmb-plus
-website: https://leonidk.github.io/fmb-plus
+openreview: https://openreview.net/forum?id=Sr5XaZzirA
 ---
 We propose a simple yet effective approach for accelerating neural field training.
