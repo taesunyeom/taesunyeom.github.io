@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Fast Training of Sinusoidal Neural Fields vis Scaling Initialization"
+title:  "Fast Training of Sinusoidal Neural Fields via Scaling Initialization"
 date:   2025-01-25 01:19:15 +0900
 image: /images/fast.jpg
 categories: research
