@@ -2,7 +2,7 @@
 layout: post
 title:  "On the Internal Representations of Graph Metanetworks"
 date:   2025-02-23 01:19:15 +0900
-image: /images/fast.jpg
+image: /images/gmn.jpg
 categories: research
 author: "Taesun Yeom"
 authors: "<strong>Taesun Yeom</strong> and Jaeho Lee"
