@@ -1,0 +1,14 @@
+---
+layout: post
+title:  "On the Internal Representations of Graph Metanetworks"
+date:   2025-02-23 01:19:15 +0900
+image: /images/fast.jpg
+categories: research
+author: "Taesun Yeom"
+authors: "<strong>Taesun Yeom</strong> and Jaeho Lee"
+venue: "Under review"
+# arxiv: https://arxiv.org/abs/2308.14737
+# # code: https://github.com/leonidk/fmb-plus
+# openreview: https://openreview.net/forum?id=Sr5XaZzirA
+---
+What do graph metanetworks learn?
