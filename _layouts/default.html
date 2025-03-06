@@ -79,7 +79,7 @@
               <br>
               <em>{{post.venue}}</em>, {{ post.date | date: "%Y" }}
               <br>
-              {% if post.arxiv %}
+              <!-- {% if post.arxiv %}
               <a href="{{post.arxiv}}">arxiv</a> /
               {% endif %}
               {% if post.paper %}
@@ -105,7 +105,56 @@
               {% endif %}
               {% if post.openreview %}
               <a href="{{post.openreview}}">openreview</a> /
-              {% endif %}
+              {% endif %} -->
+              {% assign links_count = 0 %}
+{% if post.arxiv %}{% assign links_count = links_count | plus: 1 %}{% endif %}
+{% if post.paper %}{% assign links_count = links_count | plus: 1 %}{% endif %}
+{% if post.video %}{% assign links_count = links_count | plus: 1 %}{% endif %}
+{% if post.code %}{% assign links_count = links_count | plus: 1 %}{% endif %}
+{% if post.poster %}{% assign links_count = links_count | plus: 1 %}{% endif %}
+{% if post.slides %}{% assign links_count = links_count | plus: 1 %}{% endif %}
+{% if post.website %}{% assign links_count = links_count | plus: 1 %}{% endif %}
+{% if post.youtube %}{% assign links_count = links_count | plus: 1 %}{% endif %}
+{% if post.openreview %}{% assign links_count = links_count | plus: 1 %}{% endif %}
+
+{% assign printed = 0 %}
+
+{% if post.arxiv %}
+  {% assign printed = printed | plus: 1 %}
+  <a href="{{ post.arxiv }}">arxiv</a>{% if printed != links_count %} / {% endif %}
+{% endif %}
+{% if post.paper %}
+  {% assign printed = printed | plus: 1 %}
+  <a href="{{ post.paper }}">paper</a>{% if printed != links_count %} / {% endif %}
+{% endif %}
+{% if post.video %}
+  {% assign printed = printed | plus: 1 %}
+  <a href="{{ post.video }}">video</a>{% if printed != links_count %} / {% endif %}
+{% endif %}
+{% if post.code %}
+  {% assign printed = printed | plus: 1 %}
+  <a href="{{ post.code }}">code</a>{% if printed != links_count %} / {% endif %}
+{% endif %}
+{% if post.poster %}
+  {% assign printed = printed | plus: 1 %}
+  <a href="{{ post.poster }}">poster</a>{% if printed != links_count %} / {% endif %}
+{% endif %}
+{% if post.slides %}
+  {% assign printed = printed | plus: 1 %}
+  <a href="{{ post.slides }}">slides</a>{% if printed != links_count %} / {% endif %}
+{% endif %}
+{% if post.website %}
+  {% assign printed = printed | plus: 1 %}
+  <a href="{{ post.website }}">website</a>{% if printed != links_count %} / {% endif %}
+{% endif %}
+{% if post.youtube %}
+  {% assign printed = printed | plus: 1 %}
+  <a href="{{ post.youtube }}">youtube</a>{% if printed != links_count %} / {% endif %}
+{% endif %}
+{% if post.openreview %}
+  {% assign printed = printed | plus: 1 %}
+  <a href="{{ post.openreview }}">openreview</a>{% if printed != links_count %} / {% endif %}
+{% endif %}
               <p></p>
               {{ post.excerpt }}
             </td>

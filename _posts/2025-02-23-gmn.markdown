@@ -6,7 +6,7 @@ image: /images/gmn.jpg
 categories: research
 author: "Taesun Yeom"
 authors: "<strong>Taesun Yeom</strong> and Jaeho Lee"
-venue: "ICLR 2025 workshop on Weight Space Learning"
+venue: "ICLR Workshop on Weight Space Learning"
 # arxiv: https://arxiv.org/abs/2308.14737
 # # code: https://github.com/leonidk/fmb-plus
 openreview: https://openreview.net/forum?id=WAyD9ZPuk6
