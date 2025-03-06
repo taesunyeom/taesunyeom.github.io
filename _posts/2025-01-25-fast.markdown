@@ -7,7 +7,7 @@ categories: research
 author: "Taesun Yeom"
 authors: "<strong>Taesun Yeom*</strong>, Sangyoon Lee*, and Jaeho Lee"
 venue: "International Conference on Learning Representations (ICLR)"
-arxiv: https://arxiv.org/abs/2308.14737
+arxiv: https://arxiv.org/abs/2410.04779
 # code: https://github.com/leonidk/fmb-plus
 openreview: https://openreview.net/forum?id=Sr5XaZzirA
 ---
