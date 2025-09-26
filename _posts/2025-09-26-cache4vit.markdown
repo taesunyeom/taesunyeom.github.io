@@ -1,0 +1,14 @@
+---
+layout: post
+title:  "Post-training quantization of vision encoders needs prefixing registers"
+date:   2024-09-26 01:34:51 +0900
+# image: /images/dudgan.jpeg
+categories: research
+author: "Taesun Yeom"
+authors: "Seunghyeon Kim, Jinho Kim, <strong>Taesun Yeom</strong>, Wonpyo Park, Kyuyeun Kim, and Jaeho Lee"
+venue: "Under review"
+# paper: https://ieeexplore.ieee.org/document/10458911/
+# code: https://github.com/taesunyeom/DuDGAN
+# website: https://leonidk.github.io/fmb-plus
+---
+TBD
