@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "Post-training quantization of vision encoders needs prefixing registers"
-date:   2024-09-26 01:34:51 +0900
-# image: /images/dudgan.jpeg
+title:  "Post-Training Quantization of Vision Encoders Needs Prefixing Registers"
+date:   2025-09-26 01:34:51 +0900
+image: /images/white.png
 categories: research
 author: "Taesun Yeom"
 authors: "Seunghyeon Kim, Jinho Kim, <strong>Taesun Yeom</strong>, Wonpyo Park, Kyuyeun Kim, and Jaeho Lee"
