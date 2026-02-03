@@ -1,0 +1,14 @@
+---
+layout: post
+title:  "Over-Alignment vs Over-Fitting: The Role of Feature Learning Strength in Generalization"
+date:   2026-02-03 17:00:51 +0900
+image: /images/oa_of.png
+categories: research
+author: "Taesun Yeom"
+authors: "<strong>Taesun Yeom</strong>, Taehyeok Ha, and Jaeho Lee"
+venue: "Under review"
+arxiv: https://arxiv.org/abs/2602.00827
+# code: https://github.com/taesunyeom/DuDGAN
+# website: https://leonidk.github.io/fmb-plus
+---
+We establish the existence of an optimal feature learning strength in classification and provide a theoretical explanation.
