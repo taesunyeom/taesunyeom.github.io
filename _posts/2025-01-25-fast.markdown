@@ -11,4 +11,4 @@ arxiv: https://arxiv.org/abs/2410.04779
 code: https://github.com/effl-lab/Fast-Neural-Fields
 openreview: https://openreview.net/forum?id=Sr5XaZzirA
 ---
-We propose a simple yet effective approach for accelerating neural field training.
+We propose a simple yet effective method to accelerate neural field training.

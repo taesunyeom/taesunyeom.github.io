@@ -11,4 +11,4 @@ paper: https://ieeexplore.ieee.org/document/10458911/
 code: https://github.com/taesunyeom/DuDGAN
 # website: https://leonidk.github.io/fmb-plus
 ---
-We propose a dual-diffusion process, which aims to reduce overfitting of class-conditional GANs.
+We propose a dual-diffusion process to mitigate overfitting in class-conditional GANs.

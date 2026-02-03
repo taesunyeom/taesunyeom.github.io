@@ -11,4 +11,4 @@ paper: https://www.sciencedirect.com/science/article/pii/S0893608023001144
 # code: https://github.com/leonidk/fmb-plus
 code: https://github.com/taesunyeom/SuperstarGAN
 ---
-Enabling GANs for image-to-image translation in large-scale domains.
+This work enables GANs for image-to-image translation across large-scale domains.
