@@ -1,0 +1,58 @@
+# jemdoc: menu{MENU}{index.html}, nofooter
+= Taesun Yeom
+
+I'm a second-year M.S.–Ph.D. student at [https://effl.postech.ac.kr EffL (Efficient Learning Lab)], POSTECH (advisor: Prof. [https://jaeho-lee.github.io/ Jaeho Lee]).
+For my research, I primarily focus on understanding various phenomena that arise in deep neural networks from a theoretical perspective.
+
+My recent research interests include (1) /Implicit biases and learning dynamics of neural networks/, (2) /Deep learning with infinite-dimensional functions (e.g., neural fields)/, and (3) /Efficient deep learning/.
+
+Before joining EffL, I received my bachelor's degree in Mechanical Engineering from Chung-Ang University and worked closely with Prof. [https://aicau.co.kr/?page_id=75 Minhyeok Lee] and Prof. [https://sites.google.com/view/cau-aisl/people/faculty?authuser=0 Seokwon Lee].
+
+[mailto:tsyeom@postech.ac.kr Email] | [https://github.com/taesunyeom GitHub] | [https://scholar.google.com/citations?user=JobmaFQAAAAJ&hl Google Scholar] | [https://www.linkedin.com/in/tsyeom/ LinkedIn] | [https://drive.google.com/file/d/1wq58zzOcuMcb6byEhE9WU63PW1bQrUr0/view?usp=drive_link CV]
+
+== Publications
+
+- *Over-Alignment vs Over-Fitting: The Role of Feature Learning Strength in Generalization*\n
+  *Taesun Yeom*, Taehyeok Ha, and Jaeho Lee\n
+  /Under review/, 2026\n
+  [https://arxiv.org/abs/2602.00827 arxiv]
+
+- *Activation Quantization of Vision Encoders Needs Prefixing Registers*\n
+  Seunghyeon Kim, Jinho Kim, *Taesun Yeom*, Wonpyo Park, Kyuyeun Kim, and Jaeho Lee\n
+  /Under review/, 2025\n
+  [https://arxiv.org/abs/2510.04547 arxiv]
+
+- *On the Internal Representations of Graph Metanetworks*\n
+  *Taesun Yeom* and Jaeho Lee\n
+  /ICLR Workshop on Weight Space Learning/, 2025\n
+  [https://arxiv.org/abs/2503.09120 arxiv] | [https://openreview.net/forum?id=WAyD9ZPuk6 openreview]
+
+- *Fast Training of Sinusoidal Neural Fields via Scaling Initialization*\n
+  *Taesun Yeom\**, Sangyoon Lee\*, and Jaeho Lee\n
+  /International Conference on Learning Representations (ICLR)/, 2025\n
+  [https://arxiv.org/abs/2410.04779 arxiv] | [https://github.com/effl-lab/Fast-Neural-Fields code] | [https://openreview.net/forum?id=Sr5XaZzirA openreview]
+
+- *DuDGAN: Improving Class-Conditional GANs via Dual-Diffusion*\n
+  *Taesun Yeom*, Chanhoe Gu, and Minhyeok Lee\n
+  /IEEE Access/, 2024\n
+  [https://ieeexplore.ieee.org/document/10458911/ paper] | [https://github.com/taesunyeom/DuDGAN code]
+
+- *Superstargan: Generative adversarial networks for image-to-image translation in large-scale domains*\n
+  Kanghyeok Ko, *Taesun Yeom*, and Minhyeok Lee\n
+  /Neural Networks/, 2023\n
+  [https://www.sciencedirect.com/science/article/pii/S0893608023001144 paper] | [https://github.com/taesunyeom/SuperstarGAN code]
+
+== Education
+
+- *M.S.–Ph.D. in Artificial Intelligence* \n
+  Pohang University of Science and Technology (POSTECH), South Korea \n
+  2024.09 -- Present
+
+- *B.S. in Mechanical Engineering* \n
+  Chung-Ang University, South Korea \n
+  2018.03 -- 2024.08
+
+== Teaching Experience
+
+- Teaching assistant for POSTECH EECE454-01 Intro. to Machine Learning Systems (Fall 2025).
+- Teaching assistant for POSTECH EECE695D Deep Learning Theory (Fall 2024).
