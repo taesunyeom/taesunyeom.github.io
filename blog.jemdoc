@@ -1,4 +1,4 @@
-# jemdoc: menu{MENU}{blog.html}, nofooter
+# jemdoc: menu{MENU}{blog.html}, nofooter, mathjax
 = Blog
 
 Coming soon.
