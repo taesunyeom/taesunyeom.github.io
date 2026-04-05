@@ -151,7 +151,7 @@ In the related setting of linear regression, recent progress has been made. Varm
 
 == References
 
-\[1\] Soudry et al., The implicit bias of gradient descent on separable data. /Journal of Machine Learning Research/, 2018.\n
+\[1\] Soudry et al., The implicit bias of gradient descent on separable data. /JMLR/, 2018.\n
 \[2\] Zhang et al., The implicit bias of Adam on separable data. /NeurIPS/, 2024.\n
 \[3\] Sun et al., Mirror descent maximizes generalized margin and can be implemented efficiently. /NeurIPS/, 2022.\n
 \[4\] Varma and Hassibi, Optimal implicit bias in linear regression. /NeurIPS OPT workshop/, 2025.
