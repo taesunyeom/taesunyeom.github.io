@@ -102,15 +102,26 @@ The choice of potential $\phi$ fundamentally determines the geometry of the opti
 
 === The $p$-GD Algorithm
 
-Sun et al. \[3\] consider a specific family of mirror descent algorithms called $p$-GD, obtained by choosing the potential function $\phi(\mathbf{w}) = \frac{1}{p}\|\mathbf{w}\|_p^p = \frac{1}{p}\sum_j |w_j|^p$ for $p \geq 1$. Since $\nabla_j \phi(\mathbf{w}) = |w_j|^{p-2} w_j$, the mirror descent dual update $\nabla \phi(\mathbf{w}(t+1)) = \nabla \phi(\mathbf{w}(t)) - \eta \nabla L(\mathbf{w}(t))$ yields the following coordinate-wise form:
-
+Sun et al. \[3\] consider a specific family of mirror descent algorithms called $p$-GD, obtained by choosing the potential function
 \(
-|w_j(t+1)|^{p-2} \, w_j(t+1) = |w_j(t)|^{p-2} \, w_j(t) - \eta \, \nabla_j L(\mathbf{w}(t))
+\phi(\mathbf{w}) = \frac{1}{p}\|\mathbf{w}\|_p^p = \frac{1}{p}\sum_j |w_j|^p
+\)
+for $p > 1$. For $p > 1$, this potential is differentiable and strictly convex, and its gradient is given coordinate-wise by
+\(
+\nabla_j \phi(\mathbf{w}) = |w_j|^{p-2} w_j = \operatorname{sign}(w_j)|w_j|^{p-1}.
+\)
+Therefore, the mirror descent dual update
+\(
+\nabla \phi(\mathbf{w}(t+1)) = \nabla \phi(\mathbf{w}(t)) - \eta \nabla L(\mathbf{w}(t))
+\)
+takes the following coordinate-wise form:
+\(
+|w_j(t+1)|^{p-2} \, w_j(t+1) = |w_j(t)|^{p-2} \, w_j(t) - \eta \, \nabla_j L(\mathbf{w}(t)).
 \)
 
-To recover the primal iterate $\mathbf{w}(t+1)$ from the updated dual variable, one applies the inverse mirror map $(\nabla \phi)^{-1}$. It is worth noting the boundary cases: when $p = 2$, the mirror map reduces to the identity and $p$-GD recovers standard gradient descent. As $p \to \infty$, the update increasingly resembles sign gradient descent, which is closely related to Adam.
+To recover the primal iterate $\mathbf{w}(t+1)$ from the updated dual variable, one applies the inverse mirror map $(\nabla \phi)^{-1}$. It is worth noting the boundary cases: when $p = 2$, the mirror map reduces to the identity and $p$-GD recovers standard gradient descent. The case $p = 1$ is excluded here, since $\phi(\mathbf{w}) = \|\mathbf{w}\|_1$ is not differentiable at zero and is not strictly convex; in practice, one may instead use $p = 1 + \varepsilon$ as a surrogate for an $\ell_1$-type geometry. As $p \to \infty$, the update increasingly resembles sign gradient descent (i.e., a simpler version of Adam).
 
-=== Main Result: Convergence to the $\ell_p$-Max-Margin
+=== Convergence to the $\ell_p$-Max-Margin via $p$-GD
 
 The central theoretical contribution of Sun et al. \[3\] is the following convergence guarantee. Consider binary linear classification on a linearly separable dataset $\{(\mathbf{x}_n, y_n)\}_{n=1}^N$ with an exponential-tail loss $\ell$ (i.e., $\ell(u) \sim e^{-u}$ as $u \to \infty$, such as the logistic loss). Then, the iterates of $p$-GD satisfy:
 
@@ -124,34 +135,28 @@ where $\hat{\mathbf{w}}_p$ is the maximum $\ell_p$-margin solution:
 \hat{\mathbf{w}}_p = \arg\max_{\mathbf{w}:\|\mathbf{w}\|_p=1} \min_{n} \, y_n \, \mathbf{w}^\top \mathbf{x}_n
 \)
 
-This result unifies and generalizes prior work: By varying $p \in [1, \infty)$, one obtains a continuous family of implicit biases that interpolates between these two extremes.
-
-=== Connection to the Regularization Path
-
-Beyond the asymptotic directional convergence, Sun et al. \[3\] establish a stronger result: for monotonically decreasing loss functions, the trajectory of $p$-GD follows the /regularization path/. That is, at each finite time $t$, the iterate $\mathbf{w}(t)$ is close in direction to the solution of the regularized empirical risk minimization problem:
-
-\(
-\min_{\mathbf{w}} \, L(\mathbf{w}) + \lambda(t) \|\mathbf{w}\|_p^p
-\)
-
-for an appropriate schedule $\lambda(t) \to 0$. This provides a more fine-grained characterization of the optimization trajectory, showing that mirror descent not only converges to the correct solution asymptotically but also follows a principled path throughout training.
+This result unifies and generalizes prior work: by varying $p \in (1, \infty)$, one obtains a continuous family of implicit biases that interpolates between these two extremes.
 
 === Practical Implementation
 
 A key contribution that distinguishes this work from prior theoretical analyses is the emphasis on computational efficiency. Sun et al. \[3\] demonstrate that $p$-GD can be implemented in a fully parallelizable manner, analogous to standard SGD. Specifically, the per-iteration cost of $p$-GD is $O(d)$ -- the same as gradient descent -- requiring only element-wise operations on the parameter vector. This stands in contrast to other mirror descent variants (e.g., those based on entropic potentials) that may require projections or other computationally expensive operations.
 
-For example, in their experiments on CIFAR-10 with various architectures, Sun et al. observed that $p$-GD with $p = 3$ consistently outperformed standard gradient descent ($p = 2$) by more than 1\% in test accuracy, while $p = 1.1$ did not yield improvements. This confirms that the choice of $p$ has tangible effects on generalization in practice, and that the optimal value is neither at the $\ell_2$ nor the $\ell_\infty$ extreme but somewhere in between.
+=== Does $p$ matters?
+
+In their experiments on CIFAR-10 with various architectures, Sun et al. observed that $p$-GD with $p = 3$ consistently outperformed standard gradient descent ($p = 2$) by more than 1\% in test accuracy, while $p = 1.1$ did not yield improvements. This confirms that the choice of $p$ has tangible effects on generalization in practice, and that the optimal value is neither at the $\ell_2$ nor the $\ell_\infty$ extreme but somewhere in between.
 
 
 == Open Questions
 
 The results of Sun et al. \[3\] naturally raise the following question: given a specific data distribution, what is the optimal value of $p$ for generalization? That is, can we characterize the $\ell_p$-geometry that minimizes the test error for a given problem? This remains an open question in the classification setting.
 
-In the related setting of linear regression, recent progress has been made. Varma \& Hassibi \[4\] provided a precise asymptotic characterization of the generalization error of interpolators obtained via stochastic mirror descent with general potentials, in the proportional regime where the number of samples scales linearly with the dimension. Their analysis identifies the optimal potential -- and hence the optimal implicit bias -- as a function of the data covariance structure, demonstrating that the best choice of implicit bias is indeed problem-dependent and can be computed in closed form for Gaussian data.
+- In the related setting of linear regression, Varma \& Hassibi \[4\] provided a precise asymptotic characterization of the generalization error of interpolators obtained via stochastic mirror descent with general potentials, in the proportional regime where the number of samples scales linearly with the dimension. Their analysis identifies the optimal potential -- and hence the optimal implicit bias -- as a function of the data covariance structure, demonstrating that the best choice of implicit bias is indeed problem-dependent and can be computed in closed form for Gaussian data.
+- Recent work by Pesme et al. \[5\] substantially broadens the theoretical picture in the classification setting. They study mirror flow -- the continuous-time counterpart of mirror descent -- on linearly separable data, and show that the trajectory converges in direction to a $\phi_\infty$-max-margin classifier, where $\phi_\infty$ is the horizon function of the mirror potential and captures its asymptotic geometry at infinity; the question of whether more general mirror geometries beyond the $\ell_p$ family can also be characterized through max-margin solutions is now largely resolved in continuous time.
 
 == References
 
 \[1\] Soudry et al., The implicit bias of gradient descent on separable data. /JMLR/, 2018.\n
 \[2\] Zhang et al., The implicit bias of Adam on separable data. /NeurIPS/, 2024.\n
 \[3\] Sun et al., Mirror descent maximizes generalized margin and can be implemented efficiently. /NeurIPS/, 2022.\n
-\[4\] Varma and Hassibi, Optimal implicit bias in linear regression. /NeurIPS OPT workshop/, 2025.
+\[4\] Varma and Hassibi, Optimal implicit bias in linear regression. /NeurIPS OPT workshop/, 2025.\n
+\[5\] Pesme et al., Implicit Bias of Mirror Flow on Separable Data, /NeurIPS/, 2024.
