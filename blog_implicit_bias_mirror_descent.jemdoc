@@ -140,6 +140,8 @@ for an appropriate schedule $\lambda(t) \to 0$. This provides a more fine-graine
 
 A key contribution that distinguishes this work from prior theoretical analyses is the emphasis on computational efficiency. Sun et al. \[3\] demonstrate that $p$-GD can be implemented in a fully parallelizable manner, analogous to standard SGD. Specifically, the per-iteration cost of $p$-GD is $O(d)$ -- the same as gradient descent -- requiring only element-wise operations on the parameter vector. This stands in contrast to other mirror descent variants (e.g., those based on entropic potentials) that may require projections or other computationally expensive operations.
 
+For example, in their experiments on CIFAR-10 with various architectures, Sun et al. observed that $p$-GD with $p = 3$ consistently outperformed standard gradient descent ($p = 2$) by more than 1\% in test accuracy, while $p = 1.1$ did not yield improvements. This confirms that the choice of $p$ has tangible effects on generalization in practice, and that the optimal value is neither at the $\ell_2$ nor the $\ell_\infty$ extreme but somewhere in between.
+
 
 == Open Questions
 
