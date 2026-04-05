@@ -49,7 +49,7 @@ In this particular case, $\mathbf{w}_b$ still wins. However, consider a slightly
 
 The key insight is that no single value of $p$ is universally optimal. The appropriate geometry depends on the structure of the data distribution -- specifically, on how the informative and spurious features are distributed in magnitude and correlation.
 
-This observation motivates the search for optimization algorithms whose implicit bias can be tuned to match the geometry of the problem. Zhang \& Zou \[2\] showed that Adam converges in direction to the maximum $\ell_\infty$-margin classifier on linearly separable data, in contrast to the $\ell_2$-margin convergence of gradient descent. This demonstrates that the choice of optimizer directly determines the geometry of the implicit bias.
+This observation motivates the search for optimization algorithms whose implicit bias can be tuned to match the geometry of the problem. Zhang et al. \[2\] showed that Adam converges in direction to the maximum $\ell_\infty$-margin classifier on linearly separable data, in contrast to the $\ell_2$-margin convergence of gradient descent. This demonstrates that the choice of optimizer directly determines the geometry of the implicit bias.
 
 However, for example, gradient descent and Adam correspond to only two specific geometries: $\ell_2$ and $\ell_\infty$, respectively. In practice, the optimal geometry for a given problem may lie somewhere between these two extremes. This raises a natural question: is it possible to /continuously/ interpolate between the $\ell_2$- and $\ell_\infty$-max-margin solutions? Sun et al. \[3\] provide an affirmative answer through the framework of mirror descent.
 
@@ -151,7 +151,7 @@ In the related setting of linear regression, recent progress has been made. Varm
 
 == References
 
-\[1\] D. Soudry, E. Hoffer, M. S. Nacson, S. Gunasekar, and N. Srebro. The implicit bias of gradient descent on separable data. /Journal of Machine Learning Research/, 2018.\n
-\[2\] C. Zhang and D. Zou. The implicit bias of Adam on separable data. /NeurIPS/, 2024.\n
-\[3\] H. Sun, K. Ahn, C. Thrampoulidis, and N. Azizan. Mirror descent maximizes generalized margin and can be implemented efficiently. /NeurIPS/, 2022.\n
-\[4\] K. N. Varma and B. Hassibi. Optimal implicit bias in linear regression. /NeurIPS OPT workshop/, 2025.
+\[1\] Soudry et al., The implicit bias of gradient descent on separable data. /Journal of Machine Learning Research/, 2018.\n
+\[2\] Zhang et al., The implicit bias of Adam on separable data. /NeurIPS/, 2024.\n
+\[3\] Sun et al., Mirror descent maximizes generalized margin and can be implemented efficiently. /NeurIPS/, 2022.\n
+\[4\] Varma and Hassibi, Optimal implicit bias in linear regression. /NeurIPS OPT workshop/, 2025.
