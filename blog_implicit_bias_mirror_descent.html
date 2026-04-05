@@ -40,29 +40,46 @@
 <p>Consider a binary classification problem in \(\mathbb{R}^d\) with \(d = 2\). Suppose the true labeling function depends only on the first coordinate: \(y = \text{sign}(x_1)\). The second coordinate \(x_2\) is a spurious feature that happens to be correlated with the label in the training data but carries no causal information. Concretely, let the training set be:</p>
 <p style="text-align:center">
 \[
-(\mathbf{x}_1, y_1) = ((1, 10), +1), \quad (\mathbf{x}_2, y_2) = ((-1, -10), -1)
+(\mathbf{x}_1, y_1) = ([1, 10]^\top, +1), \quad (\mathbf{x}_2, y_2) = ([-1, -10]^\top, -1).
 \]
-</p><p>Any linear classifier \(\mathbf{w} = (\alpha, \beta)\) with \(\alpha + 10\beta &gt; 0\) and \(-\alpha - 10\beta &lt; 0\) correctly separates this data. In particular, both \(\mathbf{w}_a = (1, 0)\) and \(\mathbf{w}_b = (0, 1)\) are valid classifiers. To determine which one gradient descent converges to, we compute the \(\ell_2\)-margin for each:</p>
+</p><p>Any linear classifier \(\mathbf{w} = (\alpha, \beta)\) with \(\alpha + 10\beta &gt; 0\) correctly separates this data. In particular, both \(\mathbf{w}_a = (1, 0)\) and \(\mathbf{w}_b = (0, 1)\) are valid classifiers. To understand which direction gradient descent prefers, let us compare their \(\ell_2\)-margins:</p>
 <ul>
-<li><p>For \(\mathbf{w}_a = (1, 0)\): the margin is \(\min_n y_n \mathbf{w}_a^\top \mathbf{x}_n / \|\mathbf{w}_a\| = \min(1, 1) = 1\).</p>
-</li>
-<li><p>For \(\mathbf{w}_b = (0, 1)\): the margin is \(\min_n y_n \mathbf{w}_b^\top \mathbf{x}_n / \|\mathbf{w}_b\| = \min(10, 10) = 10\).</p>
+<li><p>For \(\mathbf{w}_a = (1, 0)\), the margin is</p>
 </li>
 </ul>
-<p>The max-\(\ell_2\)-margin solution strongly favors \(\mathbf{w}_b\), which relies entirely on the spurious feature \(x_2\). At test time, if new samples are drawn from a distribution where \(x_2\) is independent of the label (e.g., \((\mathbf{x}, y) = ((1, -5), +1)\)), the classifier \(\mathbf{w}_b\) misclassifies them, whereas \(\mathbf{w}_a\) generalizes correctly.</p>
+<p style="text-align:center">
+\[
+  \min_n \frac{y_n \mathbf{w}_a^\top \mathbf{x}_n}{\|\mathbf{w}_a\|_2}
+  = \min(1,1)=1.
+  \]
+</p><ul>
+<li><p>For \(\mathbf{w}_b = (0, 1)\), the margin is</p>
+</li>
+</ul>
+<p style="text-align:center">
+\[
+  \min_n \frac{y_n \mathbf{w}_b^\top \mathbf{x}_n}{\|\mathbf{w}_b\|_2}
+  = \min(10,10)=10.
+  \]
+</p><p>Thus, among these two candidate directions, the \(\ell_2\)-margin strongly favors \(\mathbf{w}_b\). More generally, the exact maximum-\(\ell_2\)-margin classifier is proportional to \((1,10)\), so it places most of its weight on the spurious coordinate \(x_2\). At test time, if new samples are drawn from a distribution where \(x_2\) is independent of the label, this can lead to poor generalization. For example, for \((\mathbf{x}, y)=((1,-5),+1)\), the classifier \(\mathbf{w}_b\) misclassifies the point, whereas \(\mathbf{w}_a\) predicts correctly.</p>
 <h3>The Geometry Behind the Failure</h3>
-<p>The root cause of this failure lies in the geometry of the \(\ell_2\)-norm. The \(\ell_2\)-max-margin solution treats all coordinates equally and selects the direction that maximizes the minimum distance to the decision boundary in Euclidean space. When a spurious feature has large magnitude, it dominates the margin computation and attracts the solution.</p>
-<p>Now consider what happens under a different geometry. The \(\ell_\infty\)-margin of a classifier \(\mathbf{w}\) is defined as \(\min_n y_n \mathbf{w}^\top \mathbf{x}_n / \|\mathbf{w}\|_\infty\). For the same example:</p>
+<p>The root cause of this failure lies in the geometry of the \(\ell_2\)-norm. The maximum-\(\ell_2\)-margin solution chooses the direction that maximizes the minimum signed distance to the decision boundary in Euclidean geometry. When a spurious feature has much larger magnitude than the informative one, it can dominate the margin computation and pull the solution toward that coordinate.</p>
+<p>Now consider what happens under a different geometry. The \(\ell_\infty\)-margin of a classifier \(\mathbf{w}\) is defined as</p>
+<p style="text-align:center">
+\[
+\min_n \frac{y_n \mathbf{w}^\top \mathbf{x}_n}{\|\mathbf{w}\|_\infty}.
+\]
+</p><p>For the same example:</p>
 <ul>
-<li><p>For \(\mathbf{w}_a = (1, 0)\): the \(\ell_\infty\)-margin is \(1 / 1 = 1\).</p>
+<li><p>For \(\mathbf{w}_a = (1, 0)\), the \(\ell_\infty\)-margin is \(1/1 = 1\).</p>
 </li>
-<li><p>For \(\mathbf{w}_b = (0, 1)\): the \(\ell_\infty\)-margin is \(10 / 1 = 10\).</p>
+<li><p>For \(\mathbf{w}_b = (0, 1)\), the \(\ell_\infty\)-margin is \(10/1 = 10\).</p>
 </li>
 </ul>
-<p>In this particular case, \(\mathbf{w}_b\) still wins. However, consider a slightly different scenario where the data exhibits coordinate-wise sparsity: the informative feature has moderate magnitude but is the <i>only</i> consistently predictive coordinate. In such settings, smaller values of \(p\) in the \(\ell_p\)-margin encourage sparser solutions that concentrate on fewer coordinates, which can better align with the true structure of the problem.</p>
-<p>The key insight is that no single value of \(p\) is universally optimal. The appropriate geometry depends on the structure of the data distribution &ndash; specifically, on how the informative and spurious features are distributed in magnitude and correlation.</p>
-<p>This observation motivates the search for optimization algorithms whose implicit bias can be tuned to match the geometry of the problem. Zhang et al. [2] showed that Adam converges in direction to the maximum \(\ell_\infty\)-margin classifier on linearly separable data, in contrast to the \(\ell_2\)-margin convergence of gradient descent. This demonstrates that the choice of optimizer directly determines the geometry of the implicit bias.</p>
-<p>However, for example, gradient descent and Adam correspond to only two specific geometries: \(\ell_2\) and \(\ell_\infty\), respectively. In practice, the optimal geometry for a given problem may lie somewhere between these two extremes. This raises a natural question: is it possible to <i>continuously</i> interpolate between the \(\ell_2\)- and \(\ell_\infty\)-max-margin solutions? Sun et al. [3] provide an affirmative answer through the framework of mirror descent.</p>
+<p>So even under \(\ell_\infty\) geometry, the coordinate aligned with the larger-magnitude feature is still preferred over \(\mathbf{w}_a\) in this toy example. In fact, the exact maximum-\(\ell_\infty\)-margin solution is proportional to \((1,1)\), not \((0,1)\). Therefore, this example should not be interpreted as showing that \(\ell_\infty\) geometry automatically fixes the problem. Rather, its purpose is to illustrate a narrower point: the geometry induced by the optimizer changes which separating direction is preferred, and Euclidean geometry can overemphasize large-magnitude but non-causal coordinates.</p>
+<p>In settings with coordinate-wise sparsity, however, smaller values of \(p\) in the \(\ell_p\)-margin can encourage solutions that concentrate on fewer coordinates, which may better align with the true predictive structure of the data. The key insight is that no single value of \(p\) is universally optimal. The appropriate geometry depends on the structure of the data distribution &ndash; specifically, on how informative and spurious features are distributed in magnitude and correlation.</p>
+<p>This observation motivates the search for optimization algorithms whose implicit bias can be tuned to match the geometry of the problem. In linearly separable linear classification with logistic or exponential loss, Zhang et al. [2] showed that Adam, in the setting without the stabilizing \(\epsilon\) term and under a broad class of diminishing learning-rate schedules, converges in direction toward a maximum \(\ell_\infty\)-margin classifier. This contrasts with the \(\ell_2\)-margin bias of gradient descent and illustrates that the optimizer can directly influence the geometry of the implicit bias.</p>
+<p>However, gradient descent and Adam correspond to only two particular geometries, namely \(\ell_2\) and \(\ell_\infty\). In practice, the most suitable geometry for a given problem may lie somewhere between these two extremes. This raises a natural question: can we continuously interpolate between these implicit biases? Sun et al. [3] provide an affirmative answer through the framework of mirror descent.</p>
 <h2>Background: Mirror Descent</h2>
 <h3>Gradient Descent as a Proximal Method</h3>
 <p>To motivate mirror descent, it is instructive to first reinterpret gradient descent from a proximal perspective. The standard gradient descent update \(\mathbf{w}(t+1) = \mathbf{w}(t) - \eta \nabla L(\mathbf{w}(t))\) can equivalently be written as the solution to the following optimization problem:</p>
