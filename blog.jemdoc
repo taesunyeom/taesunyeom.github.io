@@ -1,4 +1,4 @@
 # jemdoc: menu{MENU}{blog.html}, nofooter, mathjax
 = Blog
 
-- [blog_md.html Implicit Bias of Mirror Descent in Linear Classification]
+- [blog_implicit_bias_mirror_descent.html Implicit Bias of Mirror Descent in Linear Classification]
