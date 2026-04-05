@@ -1,4 +1,155 @@
 # jemdoc: menu{MENU}{blog_md.html}, nofooter, mathjax
 = Implicit Bias of Mirror Descent in Linear Classification
 
-Coming soon.
+A central question in modern deep learning theory is why overparameterized models generalize well despite having the capacity to memorize training data. Among the various perspectives proposed to address this question, the notion of /implicit bias/ has emerged as one of the most principled. Implicit bias refers to the tendency of an optimization algorithm to select a particular solution among the many possible interpolators in an overparameterized regime. This phenomenon has been extensively studied in two canonical settings: linear regression and linear classification. This post focuses on the latter.
+
+== Implicit Bias on Separable Data
+
+Soudry et al. \[1\] established that gradient descent on linearly separable data with an exponential-tail loss (e.g., the logistic loss) satisfies the following convergence property:
+
+\(
+\lim_{t \to \infty} \frac{\mathbf{w}(t)}{\|\mathbf{w}(t)\|} = \frac{\hat{\mathbf{w}}}{\|\hat{\mathbf{w}}\|}
+\)
+
+where $\hat{\mathbf{w}}$ denotes
+
+\(
+\hat{\mathbf{w}} = \arg\max_{\mathbf{w}:\|\mathbf{w}\|=1} \min_{n} \, y_n \, \mathbf{w}^\top \mathbf{x}_n
+\)
+
+That is, gradient descent on the logistic loss, without any explicit regularization, implicitly converges in direction to the maximum $\ell_2$-margin classifier -- precisely the solution obtained by the hard-margin SVM. This result is notable, as the max-margin classifier is widely regarded as a solution with favorable generalization properties. However, as we discuss next, this is not always the case.
+
+== No Free Lunch in Implicit Bias
+
+A natural question arises: does the maximum $\ell_2$-margin solution always yield optimal generalization? The answer is negative, and understanding why motivates the need for controlling the implicit bias.
+
+=== An Illustrative Example
+
+Consider a binary classification problem in $\mathbb{R}^d$ with $d = 2$. Suppose the true labeling function depends only on the first coordinate: $y = \text{sign}(x_1)$. The second coordinate $x_2$ is a spurious feature that happens to be correlated with the label in the training data but carries no causal information. Concretely, let the training set be:
+
+\(
+(\mathbf{x}_1, y_1) = ((1, 10), +1), \quad (\mathbf{x}_2, y_2) = ((-1, -10), -1)
+\)
+
+Any linear classifier $\mathbf{w} = (\alpha, \beta)$ with $\alpha + 10\beta > 0$ and $-\alpha - 10\beta < 0$ correctly separates this data. In particular, both $\mathbf{w}_a = (1, 0)$ and $\mathbf{w}_b = (0, 1)$ are valid classifiers. To determine which one gradient descent converges to, we compute the $\ell_2$-margin for each:
+- For $\mathbf{w}_a = (1, 0)$: the margin is $\min_n y_n \mathbf{w}_a^\top \mathbf{x}_n / \|\mathbf{w}_a\| = \min(1, 1) = 1$.
+- For $\mathbf{w}_b = (0, 1)$: the margin is $\min_n y_n \mathbf{w}_b^\top \mathbf{x}_n / \|\mathbf{w}_b\| = \min(10, 10) = 10$.
+
+The max-$\ell_2$-margin solution strongly favors $\mathbf{w}_b$, which relies entirely on the spurious feature $x_2$. At test time, if new samples are drawn from a distribution where $x_2$ is independent of the label (e.g., $(\mathbf{x}, y) = ((1, -5), +1)$), the classifier $\mathbf{w}_b$ misclassifies them, whereas $\mathbf{w}_a$ generalizes correctly.
+
+=== The Geometry Behind the Failure
+
+The root cause of this failure lies in the geometry of the $\ell_2$-norm. The $\ell_2$-max-margin solution treats all coordinates equally and selects the direction that maximizes the minimum distance to the decision boundary in Euclidean space. When a spurious feature has large magnitude, it dominates the margin computation and attracts the solution.
+
+Now consider what happens under a different geometry. The $\ell_\infty$-margin of a classifier $\mathbf{w}$ is defined as $\min_n y_n \mathbf{w}^\top \mathbf{x}_n / \|\mathbf{w}\|_\infty$. For the same example:
+- For $\mathbf{w}_a = (1, 0)$: the $\ell_\infty$-margin is $1 / 1 = 1$.
+- For $\mathbf{w}_b = (0, 1)$: the $\ell_\infty$-margin is $10 / 1 = 10$.
+
+In this particular case, $\mathbf{w}_b$ still wins. However, consider a slightly different scenario where the data exhibits coordinate-wise sparsity: the informative feature has moderate magnitude but is the /only/ consistently predictive coordinate. In such settings, smaller values of $p$ in the $\ell_p$-margin encourage sparser solutions that concentrate on fewer coordinates, which can better align with the true structure of the problem.
+
+The key insight is that no single value of $p$ is universally optimal. The appropriate geometry depends on the structure of the data distribution -- specifically, on how the informative and spurious features are distributed in magnitude and correlation.
+
+This observation motivates the search for optimization algorithms whose implicit bias can be tuned to match the geometry of the problem. Zhang \& Zou \[2\] showed that Adam converges in direction to the maximum $\ell_\infty$-margin classifier on linearly separable data, in contrast to the $\ell_2$-margin convergence of gradient descent. This demonstrates that the choice of optimizer directly determines the geometry of the implicit bias.
+
+However, for example, gradient descent and Adam correspond to only two specific geometries: $\ell_2$ and $\ell_\infty$, respectively. In practice, the optimal geometry for a given problem may lie somewhere between these two extremes. This raises a natural question: is it possible to /continuously/ interpolate between the $\ell_2$- and $\ell_\infty$-max-margin solutions? Sun et al. \[3\] provide an affirmative answer through the framework of mirror descent.
+
+== Background: Mirror Descent
+
+=== Gradient Descent as a Proximal Method
+
+To motivate mirror descent, it is instructive to first reinterpret gradient descent from a proximal perspective. The standard gradient descent update $\mathbf{w}(t+1) = \mathbf{w}(t) - \eta \nabla L(\mathbf{w}(t))$ can equivalently be written as the solution to the following optimization problem:
+
+\(
+\mathbf{w}(t+1) = \arg\min_{\mathbf{w}} \left\{ \langle \nabla L(\mathbf{w}(t)), \mathbf{w} \rangle + \frac{1}{2\eta} \|\mathbf{w} - \mathbf{w}(t)\|_2^2 \right\}
+\)
+
+The first term encourages the objective to decrease, while the second term -- the squared $\ell_2$-distance -- acts as a proximity measure that prevents the iterate from moving too far in a single step. This formulation reveals that gradient descent implicitly measures distances in the parameter space using the Euclidean ($\ell_2$) geometry. A natural generalization is to replace this distance measure with one that better reflects the structure of the problem.
+
+=== Bregman Divergence
+
+The Bregman divergence provides a principled way to define such generalized distance measures. Given a strictly convex and differentiable potential function $\phi: \mathbb{R}^d \to \mathbb{R}$, the Bregman divergence $D_\phi: \mathbb{R}^d \times \mathbb{R}^d \to \mathbb{R}_{\geq 0}$ is defined as:
+
+\(
+D_\phi(\mathbf{u}, \mathbf{v}) = \phi(\mathbf{u}) - \phi(\mathbf{v}) - \langle \nabla \phi(\mathbf{v}), \mathbf{u} - \mathbf{v} \rangle
+\)
+
+Geometrically, $D_\phi(\mathbf{u}, \mathbf{v})$ measures the gap between $\phi(\mathbf{u})$ and the first-order Taylor approximation of $\phi$ at $\mathbf{v}$, evaluated at $\mathbf{u}$. By the strict convexity of $\phi$, we have $D_\phi(\mathbf{u}, \mathbf{v}) \geq 0$ with equality if and only if $\mathbf{u} = \mathbf{v}$. Note that in general $D_\phi(\mathbf{u}, \mathbf{v}) \neq D_\phi(\mathbf{v}, \mathbf{u})$, so the Bregman divergence is not a metric.
+
+Several well-known distance measures are special cases of the Bregman divergence:
+- $\phi(\mathbf{w}) = \frac{1}{2}\|\mathbf{w}\|_2^2$ yields $D_\phi(\mathbf{u}, \mathbf{v}) = \frac{1}{2}\|\mathbf{u} - \mathbf{v}\|_2^2$ (squared Euclidean distance).
+- $\phi(\mathbf{w}) = \sum_j w_j \log w_j$ yields the KL divergence, which is used in the exponentiated gradient algorithm.
+- $\phi(\mathbf{w}) = \frac{1}{p}\|\mathbf{w}\|_p^p$ yields a divergence that induces an $\ell_p$-geometry, which is the key choice for the results discussed below.
+
+=== The Mirror Descent Update
+
+Mirror descent replaces the squared $\ell_2$-norm in the proximal formulation with a Bregman divergence:
+
+\(
+\mathbf{w}(t+1) = \arg\min_{\mathbf{w}} \left\{ \langle \nabla L(\mathbf{w}(t)), \mathbf{w} \rangle + \frac{1}{\eta} D_\phi(\mathbf{w}, \mathbf{w}(t)) \right\}
+\)
+
+Taking the first-order optimality condition yields the update rule in the /dual space/:
+
+\(
+\nabla \phi(\mathbf{w}(t+1)) = \nabla \phi(\mathbf{w}(t)) - \eta \nabla L(\mathbf{w}(t))
+\)
+
+The map $\nabla \phi$ is often referred to as the /mirror map/, which gives the algorithm its name. Gradient descent performs a linear step in the primal space, whereas mirror descent performs a linear step in the dual space defined by $\nabla \phi$, and then maps back to the primal space via $(\nabla \phi)^{-1}$. When $\phi(\mathbf{w}) = \frac{1}{2}\|\mathbf{w}\|_2^2$, we have $\nabla \phi = \text{Id}$ and the dual update reduces to the standard gradient descent update.
+
+The choice of potential $\phi$ fundamentally determines the geometry of the optimization trajectory and, consequently, which solution the algorithm converges to. This is precisely the mechanism that enables continuous control over the implicit bias.
+
+== Mirror Descent and Generalized Margin
+
+=== The $p$-GD Algorithm
+
+Sun et al. \[3\] consider a specific family of mirror descent algorithms called $p$-GD, obtained by choosing the potential function $\phi(\mathbf{w}) = \frac{1}{p}\|\mathbf{w}\|_p^p = \frac{1}{p}\sum_j |w_j|^p$ for $p \geq 1$. Since $\nabla_j \phi(\mathbf{w}) = |w_j|^{p-2} w_j$, the mirror descent dual update $\nabla \phi(\mathbf{w}(t+1)) = \nabla \phi(\mathbf{w}(t)) - \eta \nabla L(\mathbf{w}(t))$ yields the following coordinate-wise form:
+
+\(
+|w_j(t+1)|^{p-2} \, w_j(t+1) = |w_j(t)|^{p-2} \, w_j(t) - \eta \, \nabla_j L(\mathbf{w}(t))
+\)
+
+To recover the primal iterate $\mathbf{w}(t+1)$ from the updated dual variable, one applies the inverse mirror map $(\nabla \phi)^{-1}$. It is worth noting the boundary cases: when $p = 2$, the mirror map reduces to the identity and $p$-GD recovers standard gradient descent. As $p \to \infty$, the update increasingly resembles sign gradient descent, which is closely related to Adam.
+
+=== Main Result: Convergence to the $\ell_p$-Max-Margin
+
+The central theoretical contribution of Sun et al. \[3\] is the following convergence guarantee. Consider binary linear classification on a linearly separable dataset $\{(\mathbf{x}_n, y_n)\}_{n=1}^N$ with an exponential-tail loss $\ell$ (i.e., $\ell(u) \sim e^{-u}$ as $u \to \infty$, such as the logistic loss). Then, the iterates of $p$-GD satisfy:
+
+\(
+\lim_{t \to \infty} \frac{\mathbf{w}(t)}{\|\mathbf{w}(t)\|_p} = \frac{\hat{\mathbf{w}}_p}{\|\hat{\mathbf{w}}_p\|_p}
+\)
+
+where $\hat{\mathbf{w}}_p$ is the maximum $\ell_p$-margin solution:
+
+\(
+\hat{\mathbf{w}}_p = \arg\max_{\mathbf{w}:\|\mathbf{w}\|_p=1} \min_{n} \, y_n \, \mathbf{w}^\top \mathbf{x}_n
+\)
+
+This result unifies and generalizes prior work: By varying $p \in [1, \infty)$, one obtains a continuous family of implicit biases that interpolates between these two extremes.
+
+=== Connection to the Regularization Path
+
+Beyond the asymptotic directional convergence, Sun et al. \[3\] establish a stronger result: for monotonically decreasing loss functions, the trajectory of $p$-GD follows the /regularization path/. That is, at each finite time $t$, the iterate $\mathbf{w}(t)$ is close in direction to the solution of the regularized empirical risk minimization problem:
+
+\(
+\min_{\mathbf{w}} \, L(\mathbf{w}) + \lambda(t) \|\mathbf{w}\|_p^p
+\)
+
+for an appropriate schedule $\lambda(t) \to 0$. This provides a more fine-grained characterization of the optimization trajectory, showing that mirror descent not only converges to the correct solution asymptotically but also follows a principled path throughout training.
+
+=== Practical Implementation
+
+A key contribution that distinguishes this work from prior theoretical analyses is the emphasis on computational efficiency. Sun et al. \[3\] demonstrate that $p$-GD can be implemented in a fully parallelizable manner, analogous to standard SGD. Specifically, the per-iteration cost of $p$-GD is $O(d)$ -- the same as gradient descent -- requiring only element-wise operations on the parameter vector. This stands in contrast to other mirror descent variants (e.g., those based on entropic potentials) that may require projections or other computationally expensive operations.
+
+
+== Open Questions
+
+The results of Sun et al. \[3\] naturally raise the following question: given a specific data distribution, what is the optimal value of $p$ for generalization? That is, can we characterize the $\ell_p$-geometry that minimizes the test error for a given problem? This remains an open question in the classification setting.
+
+In the related setting of linear regression, recent progress has been made. Varma \& Hassibi \[4\] provided a precise asymptotic characterization of the generalization error of interpolators obtained via stochastic mirror descent with general potentials, in the proportional regime where the number of samples scales linearly with the dimension. Their analysis identifies the optimal potential -- and hence the optimal implicit bias -- as a function of the data covariance structure, demonstrating that the best choice of implicit bias is indeed problem-dependent and can be computed in closed form for Gaussian data.
+
+== References
+
+\[1\] D. Soudry, E. Hoffer, M. S. Nacson, S. Gunasekar, and N. Srebro. The implicit bias of gradient descent on separable data. /Journal of Machine Learning Research/, 2018.\n
+\[2\] C. Zhang and D. Zou. The implicit bias of Adam on separable data. /NeurIPS/, 2024.\n
+\[3\] H. Sun, K. Ahn, C. Thrampoulidis, and N. Azizan. Mirror descent maximizes generalized margin and can be implemented efficiently. /NeurIPS/, 2022.\n
+\[4\] K. N. Varma and B. Hassibi. Optimal implicit bias in linear regression. /NeurIPS OPT workshop/, 2025.
