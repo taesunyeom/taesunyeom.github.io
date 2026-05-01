@@ -2,4 +2,4 @@
 = Blog
 
 - [blog_implicit_bias_mirror_descent.html Implicit Bias of Mirror Descent in Linear Classification]
-- [blog_cgmt.html Convex Gaussian Min-Max Theorem]
+- [blog_svm_mni.html On the Equivalence of SVM and MNI in Overparametrized Regime]

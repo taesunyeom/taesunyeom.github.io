@@ -12,15 +12,15 @@ Before joining EffL, I received my bachelor's degree in Mechanical Engineering f
 
 == Publications
 
-- *Over-Alignment vs Over-Fitting: The Role of Feature Learning Strength in Generalization*\n
-  *Taesun Yeom*, Taehyeok Ha, and Jaeho Lee\n
-  /Under review/, 2026\n
-  [https://arxiv.org/abs/2602.00827 arxiv]
-
 - *Activation Quantization of Vision Encoders Needs Prefixing Registers*\n
   Seunghyeon Kim, *Taesun Yeom*, Jinho Kim, Wonpyo Park, Kyuyeun Kim, and Jaeho Lee\n
   /Under review/, 2025\n
   [https://arxiv.org/abs/2510.04547 arxiv]
+
+- *Over-Alignment vs Over-Fitting: The Role of Feature Learning Strength in Generalization*\n
+  *Taesun Yeom*, Taehyeok Ha, and Jaeho Lee\n
+  /ICML/, 2026\n
+  [https://arxiv.org/abs/2602.00827 arxiv]
 
 - *On the Internal Representations of Graph Metanetworks*\n
   *Taesun Yeom* and Jaeho Lee\n
@@ -29,7 +29,7 @@ Before joining EffL, I received my bachelor's degree in Mechanical Engineering f
 
 - *Fast Training of Sinusoidal Neural Fields via Scaling Initialization*\n
   *Taesun Yeom\**, Sangyoon Lee\*, and Jaeho Lee\n
-  /International Conference on Learning Representations (ICLR)/, 2025\n
+  /ICLR/, 2025\n
   [https://arxiv.org/abs/2410.04779 arxiv] | [https://github.com/effl-lab/Fast-Neural-Fields code] | [https://openreview.net/forum?id=Sr5XaZzirA openreview]
 
 - *DuDGAN: Improving Class-Conditional GANs via Dual-Diffusion*\n
