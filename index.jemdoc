@@ -4,13 +4,17 @@
 I'm a second-year M.S.–Ph.D. student at [https://effl.postech.ac.kr EffL (Efficient Learning Lab)], POSTECH (advisor: Prof. [https://jaeho-lee.github.io/ Jaeho Lee]).
 For my research, I primarily focus on understanding various phenomena that arise in deep neural networks from a theoretical perspective.
 
-My recent research interests include (1) /Implicit biases and learning dynamics of neural networks/, (2) /Deep learning with infinite-dimensional functions (e.g., neural fields)/, and (3) /Efficient deep learning/.
+My recent research interests focus on the theoretical analysis of deep learning, particularly on connecting implicit bias, learning dynamics, and generalization.
 
 Before joining EffL, I received my bachelor's degree in Mechanical Engineering from Chung-Ang University and worked closely with Prof. [https://aicau.co.kr/?page_id=75 Minhyeok Lee] and Prof. [https://sites.google.com/view/cau-aisl/people/faculty?authuser=0 Seokwon Lee].
 
 [mailto:tsyeom@postech.ac.kr Email] | [https://github.com/taesunyeom GitHub] | [https://scholar.google.com/citations?user=JobmaFQAAAAJ&hl Google Scholar] | [https://www.linkedin.com/in/tsyeom/ LinkedIn] | [https://drive.google.com/file/d/1wq58zzOcuMcb6byEhE9WU63PW1bQrUr0/view?usp=drive_link CV]
 
 == Publications
+
+- *Generalization Analysis of Linear Knowledge Distillation*\n
+  *Taesun Yeom*, Tahyeok Ha, and Jaeho Lee\n
+  /Under review/, 2026
 
 - *Activation Quantization of Vision Encoders Needs Prefixing Registers*\n
   Seunghyeon Kim, *Taesun Yeom*, Jinho Kim, Wonpyo Park, Kyuyeun Kim, and Jaeho Lee\n
