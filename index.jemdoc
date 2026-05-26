@@ -12,19 +12,23 @@ Before joining EffL, I received my bachelor's degree in Mechanical Engineering f
 
 == Publications
 
+- *Over-Alignment vs Over-Fitting: The Role of Feature Learning Strength in Generalization*\n
+  *Taesun Yeom*, Taehyeok Ha, and Jaeho Lee\n
+  /ICML/, 2026\n
+  [https://arxiv.org/abs/2602.00827 arxiv]
+
 - *Generalization Analysis of Linear Knowledge Distillation*\n
   *Taesun Yeom*, Tahyeok Ha, and Jaeho Lee\n
-  /Under review/, 2026
+  /ICML workshop on High Dimensional Learning Dynamics/, 2026
+
+- *Small for Small: Exploring Optimal Teacher in Knowledge Distillation with Limited Data*\n
+  Minjae Park, *Taesun Yeom*, and Jaeho Lee\n
+  /ICML workshop on High Dimensional Learning Dynamics/, 2026
 
 - *Activation Quantization of Vision Encoders Needs Prefixing Registers*\n
   Seunghyeon Kim, *Taesun Yeom*, Jinho Kim, Wonpyo Park, Kyuyeun Kim, and Jaeho Lee\n
   /Under review/, 2025\n
   [https://arxiv.org/abs/2510.04547 arxiv]
-
-- *Over-Alignment vs Over-Fitting: The Role of Feature Learning Strength in Generalization*\n
-  *Taesun Yeom*, Taehyeok Ha, and Jaeho Lee\n
-  /ICML/, 2026\n
-  [https://arxiv.org/abs/2602.00827 arxiv]
 
 - *On the Internal Representations of Graph Metanetworks*\n
   *Taesun Yeom* and Jaeho Lee\n
