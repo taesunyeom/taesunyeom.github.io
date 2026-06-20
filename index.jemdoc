@@ -17,18 +17,20 @@ Before joining EffL, I received my bachelor's degree in Mechanical Engineering f
   /ICML/, 2026\n
   [https://arxiv.org/abs/2602.00827 arxiv]
 
+- *Activation Quantization of Vision Encoders Needs Prefixing Registers*\n
+  Seunghyeon Kim, *Taesun Yeom*, Jinho Kim, Wonpyo Park, Kyuyeun Kim, and Jaeho Lee\n
+  /ECCV/, 2026\n
+  [https://arxiv.org/abs/2510.04547 arxiv]
+
 - *Generalization Analysis of Linear Knowledge Distillation*\n
   *Taesun Yeom*, Tahyeok Ha, and Jaeho Lee\n
-  /ICML workshop on High Dimensional Learning Dynamics/, 2026
+  /ICML workshop on High-dimensional Learning Dynamics/, 2026\n
+  [https://openreview.net/forum?id=3vFIVSZjQ4 openreview]
 
 - *Small for Small: Exploring Optimal Teacher in Knowledge Distillation with Limited Data*\n
   Minjae Park, *Taesun Yeom*, and Jaeho Lee\n
-  /ICML workshop on High Dimensional Learning Dynamics/, 2026
-
-- *Activation Quantization of Vision Encoders Needs Prefixing Registers*\n
-  Seunghyeon Kim, *Taesun Yeom*, Jinho Kim, Wonpyo Park, Kyuyeun Kim, and Jaeho Lee\n
-  /Under review/, 2025\n
-  [https://arxiv.org/abs/2510.04547 arxiv]
+  /ICML workshop on High-dimensional Learning Dynamics/, 2026\n
+  [https://openreview.net/forum?id=FUahLuyWLU openreview]
 
 - *On the Internal Representations of Graph Metanetworks*\n
   *Taesun Yeom* and Jaeho Lee\n
