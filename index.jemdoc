@@ -1,8 +1,7 @@
 # jemdoc: menu{MENU}{index.html}, nofooter
 = Taesun Yeom
 
-I'm a second-year M.S.–Ph.D. student at [https://effl.postech.ac.kr EffL (Efficient Learning Lab)], POSTECH (advisor: Prof. [https://jaeho-lee.github.io/ Jaeho Lee]).
-For my research, I primarily focus on understanding various phenomena that arise in deep neural networks.
+I'm a second-year M.S. student at [https://effl.postech.ac.kr EffL (Efficient Learning Lab)], POSTECH (advisor: Prof. [https://jaeho-lee.github.io/ Jaeho Lee]).
 
 My recent research interests focus on the theoretical analysis of deep learning, particularly on connecting implicit bias, learning dynamics, and generalization.
 
@@ -54,7 +53,7 @@ Before joining EffL, I received my bachelor's degree in Mechanical Engineering f
 
 == Education
 
-- *M.S.–Ph.D. in Artificial Intelligence* \n
+- *M.S. in Artificial Intelligence* \n
   Pohang University of Science and Technology (POSTECH), South Korea \n
   2024.09 -- Present
 
