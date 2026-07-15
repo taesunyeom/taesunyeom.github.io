@@ -49,15 +49,39 @@
 </p><h2>When Are They Equal?</h2>
 <p>The KKT conditions of the SVM state that the solution takes the form \(\hat{\mathbf{w}}_{\text{SVM}} = \sum_i \alpha_i y_i \mathbf{x}_i\) with dual variables \(\alpha_i \geq 0\), and complementary slackness enforces \(\alpha_i &gt; 0\) only if the corresponding margin constraint is active, i.e., \(y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1\). Points with active constraints are the <i>support vectors</i>.
 </p>
-<p>Now suppose that <i>every</i> training point is a support vector, i.e., all \(n\) margin constraints are active. Then \(\hat{\mathbf{w}}_{\text{SVM}}\) satisfies \(y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1\) for all \(i\), which means it is feasible for the MNI program. Combined with the norm inequality above and the strict convexity of the objective (which guarantees uniqueness), we conclude:
+<p>The precise statement of the equivalence is the following [1, 2].
+</p>
+<p><b>Proposition.</b> Suppose \(d \geq n\) and \(\mathbf{X}\) has full row rank, and let \(\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}\). Then the following are equivalent:
+</p>
+<ol>
+<li><p>\(\hat{\mathbf{w}}_{\text{SVM}} = \hat{\mathbf{w}}_{\text{MNI}}\);
+</p>
+</li>
+<li><p>every training point is a support vector, i.e., \(y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1\) for all \(i\);
+</p>
+</li>
+<li><p>\(y_i \beta_i \geq 0\) for all \(i\).
+</p>
+</li>
+</ol>
+<p>Condition (3) says that each coefficient of the MNI, written in the basis of the training points, has the same sign as its label &ndash; so that it can serve as a valid (nonnegative) SVM dual variable. This is the form that is actually verified in the probabilistic analyses discussed in the next section.
+</p>
+<h3>Proof of the Proposition</h3>
+<p><i>(1) \(\Rightarrow\) (2).</i> The MNI interpolates the labels by construction, so \(y_i \, \hat{\mathbf{w}}_{\text{MNI}}^\top \mathbf{x}_i = y_i^2 = 1\) for all \(i\). If the two solutions coincide, every margin constraint of the SVM is therefore active.
+</p>
+<p><i>(2) \(\Rightarrow\) (1).</i> Recall from the feasible-set inclusion that \(\|\hat{\mathbf{w}}_{\text{SVM}}\|_2 \leq \|\hat{\mathbf{w}}_{\text{MNI}}\|_2\). If all margin constraints are active, then \(\hat{\mathbf{w}}_{\text{SVM}}\) satisfies \(y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1\), i.e., it is feasible for the MNI program, which forces \(\|\hat{\mathbf{w}}_{\text{MNI}}\|_2 \leq \|\hat{\mathbf{w}}_{\text{SVM}}\|_2\). Hence both points minimize the strictly convex objective \(\|\mathbf{w}\|_2^2\) over the MNI constraint set, and by uniqueness of the minimizer they are equal.
+</p>
+<p><i>(3) \(\Rightarrow\) (1).</i> Write the MNI in the span of the training points:
 </p>
 <p style="text-align:center">
 \[
-\text{every training point is a support vector} \;\; \Longleftrightarrow \;\; \hat{\mathbf{w}}_{\text{SVM}} = \hat{\mathbf{w}}_{\text{MNI}}.
+\hat{\mathbf{w}}_{\text{MNI}} = \mathbf{X}^\top \boldsymbol{\beta} = \sum_i \beta_i \mathbf{x}_i = \sum_i (y_i \beta_i) \, y_i \mathbf{x}_i,
 \]
-</p><p>Equivalently, in terms of the closed form of the MNI: writing \(\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}\) so that \(\hat{\mathbf{w}}_{\text{MNI}} = \sum_i \beta_i \mathbf{x}_i\), the two solutions coincide if and only if \(y_i \beta_i \geq 0\) for all \(i\) &ndash; that is, each coefficient \(\beta_i\) has the same sign as its label, so that it can serve as a valid (nonnegative) SVM dual variable [1, 2].
+</p><p>and set \(\alpha_i := y_i \beta_i\). We claim that \((\hat{\mathbf{w}}_{\text{MNI}}, \boldsymbol{\alpha})\) satisfies the KKT conditions of the SVM: <i>(stationarity)</i> \(\hat{\mathbf{w}}_{\text{MNI}} = \sum_i \alpha_i y_i \mathbf{x}_i\) holds by the display above; <i>(primal feasibility)</i> \(y_i \, \hat{\mathbf{w}}_{\text{MNI}}^\top \mathbf{x}_i = 1 \geq 1\) since the MNI interpolates; <i>(dual feasibility)</i> \(\alpha_i \geq 0\) is exactly condition (3); <i>(complementary slackness)</i> holds trivially since every constraint is active. As the SVM is a convex program, the KKT conditions are sufficient for optimality, so \(\hat{\mathbf{w}}_{\text{MNI}}\) solves the SVM, and by uniqueness \(\hat{\mathbf{w}}_{\text{SVM}} = \hat{\mathbf{w}}_{\text{MNI}}\).
 </p>
-<p>At first glance this condition looks restrictive: in the classical low-dimensional picture, only a few points near the decision boundary are support vectors. The surprise is that in sufficiently high dimension, <i>all</i> points become support vectors.
+<p><i>(1) \(\Rightarrow\) (3).</i> By the KKT conditions, \(\hat{\mathbf{w}}_{\text{SVM}} = \sum_i \alpha_i y_i \mathbf{x}_i\) for some \(\alpha_i \geq 0\). On the other hand, \(\hat{\mathbf{w}}_{\text{MNI}} = \sum_i \beta_i \mathbf{x}_i\). If the two coincide, then \(\sum_i (\alpha_i y_i - \beta_i) \, \mathbf{x}_i = \mathbf{0}\), and since \(\mathbf{X}\) has full row rank the vectors \(\{\mathbf{x}_i\}\) are linearly independent, so \(\beta_i = \alpha_i y_i\) for every \(i\). Multiplying by \(y_i\) gives \(y_i \beta_i = \alpha_i y_i^2 = \alpha_i \geq 0\). \(\square\)
+</p>
+<p>At first glance condition (2) looks restrictive: in the classical low-dimensional picture, only a few points near the decision boundary are support vectors. The surprise is that in sufficiently high dimension, <i>all</i> points become support vectors.
 </p>
 <h2>Support Vector Proliferation</h2>
 <p>The phenomenon that every training point becomes a support vector is called <i>support vector proliferation</i>. The intuition is cleanest for isotropic features. When the entries of \(\mathbf{X}\) are i.i.d. with zero mean and unit variance, the Gram matrix concentrates as
@@ -81,18 +105,6 @@
 <h3>The loss function does not matter</h3>
 <p>Recall the implicit bias result of Soudry et al. [6]: gradient descent on separable data with the logistic (or any exponential-tail) loss converges in direction to the hard-margin SVM. Combining this with the equivalence above yields a striking conclusion for the overparametrized regime: training a linear classifier with the logistic loss (run to convergence) and simply performing minimum-norm least-squares regression on the \(\pm 1\) labels produce <i>the same classifier direction</i>. In the heavily overparametrized regime, the choice between the two most common training losses &ndash; cross-entropy and squared loss &ndash; is immaterial to the solution found, which is exactly the message of the title of [1].
 </p>
-<h2>Summary</h2>
-<ul>
-<li><p>The MNI forces all SVM margin constraints to be equalities, so SVM \(=\) MNI exactly when every training point is a support vector, i.e., \(y_i [(\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}]_i \geq 0\) for all \(i\).
-</p>
-</li>
-<li><p>For (near-)isotropic random features this happens with high probability once \(d \gtrsim n \log n\), and this threshold is sharp [1, 2, 3].
-</p>
-</li>
-<li><p>The equivalence transfers regression-style analyses (and benign overfitting results) to classification, and shows that in this regime the training loss function does not matter [1, 5, 6].
-</p>
-</li>
-</ul>
 <h2>References</h2>
 <p>[1] Muthukumar et al., Classification vs. regression in overparameterized regimes: Does the loss function matter? <i>JMLR</i>, 2021.<br />
 [2] Hsu et al., On the proliferation of support vectors in high dimensions. <i>AISTATS</i>, 2021.<br />
