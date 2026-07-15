@@ -1,4 +1,83 @@
 # jemdoc: menu{MENU}{blog_svm_mni.html}, nofooter, mathjax
 = On the Equivalence of SVM and MNI in Overparametrized Regime
 
-Coming soon.
+The hard-margin support vector machine (SVM) and the minimum-norm interpolator (MNI) are usually introduced as two very different objects: the former is the canonical maximum-margin /classifier/, while the latter is the least-squares solution that a /regression/ analysis would produce. A remarkable phenomenon in high-dimensional statistics is that, once the model is sufficiently overparametrized, these two solutions become /exactly identical/. This post explains why this happens, when it happens, and why it is useful.
+
+== Setup: Two Interpolating Solutions
+
+Consider a binary classification dataset $\{(\mathbf{x}_i, y_i)\}_{i=1}^n$ with $\mathbf{x}_i \in \mathbb{R}^d$ and $y_i \in \{\pm 1\}$, in the overparametrized regime $d > n$ where the data matrix $\mathbf{X} \in \mathbb{R}^{n \times d}$ has full row rank. We compare two estimators.
+
+The /hard-margin SVM/ solves
+
+\(
+\hat{\mathbf{w}}_{\text{SVM}} = \arg\min_{\mathbf{w}} \|\mathbf{w}\|_2^2 \quad \text{s.t.} \quad y_i \, \mathbf{w}^\top \mathbf{x}_i \geq 1 \;\; \forall i,
+\)
+
+while the /minimum-norm interpolator/ (equivalently, the minimum-$\ell_2$-norm solution of least squares on the labels) solves
+
+\(
+\hat{\mathbf{w}}_{\text{MNI}} = \arg\min_{\mathbf{w}} \|\mathbf{w}\|_2^2 \quad \text{s.t.} \quad \mathbf{w}^\top \mathbf{x}_i = y_i \;\; \forall i,
+\)
+
+which admits the closed form $\hat{\mathbf{w}}_{\text{MNI}} = \mathbf{X}^\top (\mathbf{X}\mathbf{X}^\top)^{-1} \mathbf{y}$.
+
+Since $y_i \in \{\pm 1\}$, the interpolation constraint $\mathbf{w}^\top \mathbf{x}_i = y_i$ can be rewritten as $y_i \, \mathbf{w}^\top \mathbf{x}_i = 1$. In other words, the MNI is what one obtains by forcing /every/ margin constraint of the SVM to hold with equality. This immediately gives a one-line relation between the two programs: the feasible set of the MNI is a subset of the feasible set of the SVM, so in general
+
+\(
+\|\hat{\mathbf{w}}_{\text{SVM}}\|_2 \leq \|\hat{\mathbf{w}}_{\text{MNI}}\|_2.
+\)
+
+== When Are They Equal?
+
+The KKT conditions of the SVM state that the solution takes the form $\hat{\mathbf{w}}_{\text{SVM}} = \sum_i \alpha_i y_i \mathbf{x}_i$ with dual variables $\alpha_i \geq 0$, and complementary slackness enforces $\alpha_i > 0$ only if the corresponding margin constraint is active, i.e., $y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1$. Points with active constraints are the /support vectors/.
+
+Now suppose that /every/ training point is a support vector, i.e., all $n$ margin constraints are active. Then $\hat{\mathbf{w}}_{\text{SVM}}$ satisfies $y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1$ for all $i$, which means it is feasible for the MNI program. Combined with the norm inequality above and the strict convexity of the objective (which guarantees uniqueness), we conclude:
+
+\(
+\text{every training point is a support vector} \;\; \Longleftrightarrow \;\; \hat{\mathbf{w}}_{\text{SVM}} = \hat{\mathbf{w}}_{\text{MNI}}.
+\)
+
+Equivalently, in terms of the closed form of the MNI: writing $\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}$ so that $\hat{\mathbf{w}}_{\text{MNI}} = \sum_i \beta_i \mathbf{x}_i$, the two solutions coincide if and only if $y_i \beta_i \geq 0$ for all $i$ -- that is, each coefficient $\beta_i$ has the same sign as its label, so that it can serve as a valid (nonnegative) SVM dual variable \[1, 2\].
+
+At first glance this condition looks restrictive: in the classical low-dimensional picture, only a few points near the decision boundary are support vectors. The surprise is that in sufficiently high dimension, /all/ points become support vectors.
+
+== Support Vector Proliferation
+
+The phenomenon that every training point becomes a support vector is called /support vector proliferation/. The intuition is cleanest for isotropic features. When the entries of $\mathbf{X}$ are i.i.d. with zero mean and unit variance, the Gram matrix concentrates as
+
+\(
+\mathbf{X}\mathbf{X}^\top \approx d \, \mathbf{I}_n + \mathbf{E}, \qquad \|\mathbf{E}_{ij}\| = O(\sqrt{d}) \;\; \text{for } i \neq j,
+\)
+
+so that $\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y} \approx \mathbf{y}/d$. In this limit, every $y_i \beta_i \approx 1/d > 0$: the sign condition holds for every coordinate, and hence SVM $=$ MNI. In effect, when $d \gg n$, the training points are nearly orthogonal to each other, and no single point can be expressed economically in terms of the others -- so every point must participate in the SVM solution.
+
+Making this intuition precise requires controlling the fluctuation terms uniformly over all $n$ coordinates, and the union bound is exactly where an extra logarithmic factor enters. Muthukumar et al. \[1\] first identified the phenomenon and proved that for isotropic Gaussian features, SVM $=$ MNI holds with high probability once $d \gtrsim n \log n$. Hsu et al. \[2\] extended the sufficient condition to anisotropic settings (phrased in terms of effective dimensions of the covariance) and gave a partial converse. Ardeshir et al. \[3\] then settled the isotropic case, showing that support vector proliferation undergoes a sharp phase transition around $d \asymp n \log n$: above this scaling the two solutions coincide with high probability, and below it they differ with high probability. The logarithmic factor is therefore not an artifact of the proof technique -- it is real.
+
+Analogous results hold beyond independent features; for instance, Wang and Thrampoulidis \[4\] established support vector proliferation and its consequences for Gaussian mixture data, where labels and features are dependent.
+
+== Why Does This Matter?
+
+The equivalence is far more than a curiosity; it has become a standard workhorse in the theory of benign overfitting, for two main reasons.
+
+=== Classification analysis reduces to regression analysis
+
+The max-margin SVM is defined variationally and is generally hard to analyze directly, whereas the MNI has an explicit closed form amenable to random matrix analysis. Once SVM $=$ MNI, any risk analysis of the minimum-norm least-squares interpolator -- such as the benign overfitting characterization of Bartlett et al. \[5\] -- can be imported to study the classification error of the SVM. This is precisely the route taken by Muthukumar et al. \[1\], who showed that in certain overparametrized regimes the interpolating classifier achieves vanishing classification risk /even in settings where the corresponding regression risk does not vanish/: classification is, in this sense, easier than regression.
+
+=== The loss function does not matter
+
+Recall the implicit bias result of Soudry et al. \[6\]: gradient descent on separable data with the logistic (or any exponential-tail) loss converges in direction to the hard-margin SVM. Combining this with the equivalence above yields a striking conclusion for the overparametrized regime: training a linear classifier with the logistic loss (run to convergence) and simply performing minimum-norm least-squares regression on the $\pm 1$ labels produce /the same classifier direction/. In the heavily overparametrized regime, the choice between the two most common training losses -- cross-entropy and squared loss -- is immaterial to the solution found, which is exactly the message of the title of \[1\].
+
+== Summary
+
+- The MNI forces all SVM margin constraints to be equalities, so SVM $=$ MNI exactly when every training point is a support vector, i.e., $y_i [(\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}]_i \geq 0$ for all $i$.
+- For (near-)isotropic random features this happens with high probability once $d \gtrsim n \log n$, and this threshold is sharp \[1, 2, 3\].
+- The equivalence transfers regression-style analyses (and benign overfitting results) to classification, and shows that in this regime the training loss function does not matter \[1, 5, 6\].
+
+== References
+
+\[1\] Muthukumar et al., Classification vs. regression in overparameterized regimes: Does the loss function matter? /JMLR/, 2021.\n
+\[2\] Hsu et al., On the proliferation of support vectors in high dimensions. /AISTATS/, 2021.\n
+\[3\] Ardeshir et al., Support vector machines and linear regression coincide with very high-dimensional features. /NeurIPS/, 2021.\n
+\[4\] Wang and Thrampoulidis, Binary classification of Gaussian mixtures: Abundance of support vectors, benign overfitting, and regularization. /SIAM Journal on Mathematics of Data Science/, 2022.\n
+\[5\] Bartlett et al., Benign overfitting in linear regression. /PNAS/, 2020.\n
+\[6\] Soudry et al., The implicit bias of gradient descent on separable data. /JMLR/, 2018.
