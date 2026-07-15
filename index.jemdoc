@@ -3,7 +3,10 @@
 
 I'm a second-year M.S. student at [https://effl.postech.ac.kr EffL (Efficient Learning Lab)], POSTECH (advisor: Prof. [https://jaeho-lee.github.io/ Jaeho Lee]).
 
-My recent research interests focus on the theoretical analysis of deep learning, particularly on connecting implicit bias, learning dynamics, and generalization.
+My recent research focuses on understanding generalization in deep learning from a theoretical perspective. More specifically, I am interested in the following research questions:
+
+- How do nonlinear feature learning dynamics emerge during neural net training, and how do they shape generalization?
+- Can we rigorously quantify the generalization benefits of widely used training methods, such as knowledge distillation?
 
 Before joining EffL, I received my bachelor's degree in Mechanical Engineering from Chung-Ang University and worked closely with Prof. [https://aicau.co.kr/?page_id=75 Minhyeok Lee] and Prof. [https://cau-aisl.github.io/People Seokwon Lee].
 
@@ -19,6 +22,7 @@ Before joining EffL, I received my bachelor's degree in Mechanical Engineering f
 - *Activation Quantization of Vision Encoders Needs Prefixing Registers*\n
   Seunghyeon Kim, *Taesun Yeom*, Jinho Kim, Wonpyo Park, Kyuyeun Kim, and Jaeho Lee\n
   /ECCV/, 2026\n
+  /ICML workshop on Resource-Adaptive Foundation Model Inference/, 2026\n
   [https://arxiv.org/abs/2510.04547 arxiv]
 
 - *Generalization Analysis of Linear Knowledge Distillation*\n
