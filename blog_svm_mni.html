@@ -21,18 +21,18 @@
 <div id="toptitle">
 <h1>On the Equivalence of SVM and MNI in Overparametrized Regime</h1>
 </div>
-<p>The hard-margin support vector machine (SVM) and the minimum-norm interpolator (MNI) are usually introduced as two very different objects: the former is the canonical maximum-margin <i>classifier</i>, while the latter is the least-squares solution that a <i>regression</i> analysis would produce. A remarkable phenomenon in high-dimensional statistics is that, once the model is sufficiently overparametrized, these two solutions become <i>exactly identical</i>. This post explains why this happens, when it happens, and why it is useful.
+<p>In traditional ML, the hard-margin support vector machine (SVM) and the minimum-norm interpolator (MNI) are usually introduced as two very different objects: the former is the canonical maximum-margin <i>classifier</i>, while the latter is the least-squares solution that a <i>regression</i> analysis would produce. A remarkable phenomenon in high-dimensional statistics is that, once the model is sufficiently overparametrized, these two solutions become <i>exactly identical</i>. This post explains why this happens, when it happens, and why it is useful.
 </p>
 <h2>Setup: Two Interpolating Solutions</h2>
-<p>Consider a binary classification dataset \(\{(\mathbf{x}_i, y_i)\}_{i=1}^n\) with \(\mathbf{x}_i \in \mathbb{R}^d\) and \(y_i \in \{\pm 1\}\), in the overparametrized regime \(d &gt; n\) where the data matrix \(\mathbf{X} \in \mathbb{R}^{n \times d}\) has full row rank. We compare two estimators.
+<p>Consider a binary classification task with a dataset \(\{(\mathbf{x}_i, y_i)\}_{i=1}^n\) with \(\mathbf{x}_i \in \mathbb{R}^d\) and \(y_i \in \{\pm 1\}\), in the overparametrized (i.e., underdetermined) regime \(d &gt; n\) where the data matrix \(\mathbf{X} \in \mathbb{R}^{n \times d}\) has full row rank. We compare two estimators.
 </p>
-<p>The <i>hard-margin SVM</i> solves
+<p>The <i>hard-margin SVM</i> can be written as
 </p>
 <p style="text-align:center">
 \[
 \hat{\mathbf{w}}_{\text{SVM}} = \arg\min_{\mathbf{w}} \|\mathbf{w}\|_2^2 \quad \text{s.t.} \quad y_i \, \mathbf{w}^\top \mathbf{x}_i \geq 1 \;\; \forall i,
 \]
-</p><p>while the <i>minimum-norm interpolator</i> (equivalently, the minimum-\(\ell_2\)-norm solution of least squares on the labels) solves
+</p><p>while the <i>minimum-norm interpolator</i> (equivalently, the minimum-\(\ell_2\)-norm solution of least squares on the labels) can be written as
 </p>
 <p style="text-align:center">
 \[
@@ -40,121 +40,72 @@
 \]
 </p><p>which admits the closed form \(\hat{\mathbf{w}}_{\text{MNI}} = \mathbf{X}^\top (\mathbf{X}\mathbf{X}^\top)^{-1} \mathbf{y}\).
 </p>
-<p>Since \(y_i \in \{\pm 1\}\), the interpolation constraint \(\mathbf{w}^\top \mathbf{x}_i = y_i\) can be rewritten as \(y_i \, \mathbf{w}^\top \mathbf{x}_i = 1\). In other words, the MNI is what one obtains by forcing <i>every</i> margin constraint of the SVM to hold with equality. This immediately gives a one-line relation between the two programs: the feasible set of the MNI is a subset of the feasible set of the SVM, so in general
+<p>Here, it is worth remarking that SVMs appear quite often in deep learning theory and the implicit bias literature: For example, when the model is a linear predictor (e.g., linear or deep linear nets) and the loss function is exponentially tailed (e.g., logistic, exponential, etc.), the (normalized) asymptotic solution of GD converges to the direction of the hard-margin SVM. That is, analyzing the SVM is equivalent to analyzing the neural net in a classification task (in a minimalist setup).
 </p>
-<p style="text-align:center">
-\[
-\|\hat{\mathbf{w}}_{\text{SVM}}\|_2 \leq \|\hat{\mathbf{w}}_{\text{MNI}}\|_2.
-\]
-</p><p>The natural question is then: <i>when does equality actually hold?</i>
+<p>However, analyzing the properties of SVMs is quite hard due to the randomness of the support vectors, which depends entirely on the sampling process of the training set (or the population distribution). Then, what can we do about this?
+</p>
+<p>Thankfully, researchers have found that under a suitable condition of &ldquo;overparametrization,&rdquo; the two solutions become equivalent. We now take a deeper look.
 </p>
 <h2>Support Vector Proliferation</h2>
-<p>The KKT conditions of the SVM state that the solution takes the form \(\hat{\mathbf{w}}_{\text{SVM}} = \sum_i \alpha_i y_i \mathbf{x}_i\) with dual variables \(\alpha_i \geq 0\), and complementary slackness enforces \(\alpha_i &gt; 0\) only if the corresponding margin constraint is active, i.e., \(y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1\). Points with active constraints are the <i>support vectors</i>.
+<p>Recall that the KKT conditions of the SVM state that the solution takes the form \(\hat{\mathbf{w}}_{\text{SVM}} = \sum_i \alpha_i y_i \mathbf{x}_i\) with dual variables \(\alpha_i \geq 0\), where \(\alpha_i &gt; 0\) is allowed only if the corresponding margin constraint is active, i.e., \(y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1\); points with active constraints are the <i>support vectors</i>. The overparametrization condition under which the two solutions coincide is the following: once \(d \gtrsim n \log n\), <i>every</i> training point becomes a support vector &ndash; a phenomenon called <i>support vector proliferation</i> (SVP).
 </p>
-<p>The precise characterization of the equality is the following [1, 2].
+<p><b>Theorem (from [1, 2]).</b> Let \(\mathbf{x}_i \overset{\text{i.i.d.}}{\sim} \mathcal{N}(\mathbf{0}, \mathbf{I}_d)\), and let the labels \(y_i \in \{\pm 1\}\) be arbitrary (possibly depending on \(\mathbf{x}_i\)). There exists a universal constant \(C &gt; 0\) such that if \(d \geq C n \log n\), then with probability \(1 - o(1)\), every training point is a support vector, and consequently \(\hat{\mathbf{w}}_{\text{SVM}} = \hat{\mathbf{w}}_{\text{MNI}}\).
 </p>
-<p><b>Proposition.</b> Suppose \(d \geq n\) and \(\mathbf{X}\) has full row rank, and let \(\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}\). Then the following are equivalent:
-</p>
-<ol>
-<li><p>\(\hat{\mathbf{w}}_{\text{SVM}} = \hat{\mathbf{w}}_{\text{MNI}}\);
-</p>
-</li>
-<li><p>every training point is a support vector, i.e., \(y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1\) for all \(i\);
-</p>
-</li>
-<li><p>\(y_i \beta_i \geq 0\) for all \(i\).
-</p>
-</li>
-</ol>
-<p>Condition (3) says that each coefficient of the MNI, written in the basis of the training points, has the same sign as its label &ndash; so that it can serve as a valid (nonnegative) SVM dual variable. This is the form that is actually verified in the probabilistic analyses discussed in the next section.
-</p>
-<h3>Proof of the Proposition</h3>
-<p><i>(1) \(\Rightarrow\) (2).</i> The MNI interpolates the labels by construction, so \(y_i \, \hat{\mathbf{w}}_{\text{MNI}}^\top \mathbf{x}_i = y_i^2 = 1\) for all \(i\). If the two solutions coincide, every margin constraint of the SVM is therefore active.
-</p>
-<p><i>(2) \(\Rightarrow\) (1).</i> Recall from the feasible-set inclusion that \(\|\hat{\mathbf{w}}_{\text{SVM}}\|_2 \leq \|\hat{\mathbf{w}}_{\text{MNI}}\|_2\). If all margin constraints are active, then \(\hat{\mathbf{w}}_{\text{SVM}}\) satisfies \(y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1\), i.e., it is feasible for the MNI program, which forces \(\|\hat{\mathbf{w}}_{\text{MNI}}\|_2 \leq \|\hat{\mathbf{w}}_{\text{SVM}}\|_2\). Hence both points minimize the strictly convex objective \(\|\mathbf{w}\|_2^2\) over the MNI constraint set, and by uniqueness of the minimizer they are equal.
-</p>
-<p><i>(3) \(\Rightarrow\) (1).</i> Write the MNI in the span of the training points:
+<h3>Proof</h3>
+<p>Let \(\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}\), so that the MNI can be written in the span of the training points as
 </p>
 <p style="text-align:center">
 \[
-\hat{\mathbf{w}}_{\text{MNI}} = \mathbf{X}^\top \boldsymbol{\beta} = \sum_i \beta_i \mathbf{x}_i = \sum_i (y_i \beta_i) \, y_i \mathbf{x}_i,
+\hat{\mathbf{w}}_{\text{MNI}} = \mathbf{X}^\top \boldsymbol{\beta} = \sum_i \beta_i \mathbf{x}_i = \sum_i (y_i \beta_i) \, y_i \mathbf{x}_i.
 \]
-</p><p>and set \(\alpha_i := y_i \beta_i\). We claim that \((\hat{\mathbf{w}}_{\text{MNI}}, \boldsymbol{\alpha})\) satisfies the KKT conditions of the SVM: <i>(stationarity)</i> \(\hat{\mathbf{w}}_{\text{MNI}} = \sum_i \alpha_i y_i \mathbf{x}_i\) holds by the display above; <i>(primal feasibility)</i> \(y_i \, \hat{\mathbf{w}}_{\text{MNI}}^\top \mathbf{x}_i = 1 \geq 1\) since the MNI interpolates; <i>(dual feasibility)</i> \(\alpha_i \geq 0\) is exactly condition (3); <i>(complementary slackness)</i> holds trivially since every constraint is active. As the SVM is a convex program, the KKT conditions are sufficient for optimality, so \(\hat{\mathbf{w}}_{\text{MNI}}\) solves the SVM, and by uniqueness \(\hat{\mathbf{w}}_{\text{SVM}} = \hat{\mathbf{w}}_{\text{MNI}}\).
+</p><p>Suppose \(y_i \beta_i \geq 0\) for all \(i\), and set \(\alpha_i := y_i \beta_i\). Then \((\hat{\mathbf{w}}_{\text{MNI}}, \boldsymbol{\alpha})\) satisfies the KKT conditions of the SVM: <i>(stationarity)</i> \(\hat{\mathbf{w}}_{\text{MNI}} = \sum_i \alpha_i y_i \mathbf{x}_i\) by the display above; <i>(primal feasibility)</i> \(y_i \, \hat{\mathbf{w}}_{\text{MNI}}^\top \mathbf{x}_i = 1 \geq 1\) since the MNI interpolates; <i>(dual feasibility)</i> \(\alpha_i \geq 0\) by assumption; <i>(complementary slackness)</i> trivially, since every constraint is active. As the SVM is a convex program, the KKT conditions are sufficient for optimality, so \(\hat{\mathbf{w}}_{\text{SVM}} = \hat{\mathbf{w}}_{\text{MNI}}\) and every training point is a support vector. It therefore suffices to show that, with high probability, \(y_i \beta_i &gt; 0\) for all \(i\).
 </p>
-<p><i>(1) \(\Rightarrow\) (3).</i> By the KKT conditions, \(\hat{\mathbf{w}}_{\text{SVM}} = \sum_i \alpha_i y_i \mathbf{x}_i\) for some \(\alpha_i \geq 0\). On the other hand, \(\hat{\mathbf{w}}_{\text{MNI}} = \sum_i \beta_i \mathbf{x}_i\). If the two coincide, then \(\sum_i (\alpha_i y_i - \beta_i) \, \mathbf{x}_i = \mathbf{0}\), and since \(\mathbf{X}\) has full row rank the vectors \(\{\mathbf{x}_i\}\) are linearly independent, so \(\beta_i = \alpha_i y_i\) for every \(i\). Multiplying by \(y_i\) gives \(y_i \beta_i = \alpha_i y_i^2 = \alpha_i \geq 0\). \(\square\)
-</p>
-<p>At first glance condition (2) looks restrictive: in the classical low-dimensional picture, only a few points near the decision boundary are support vectors. The surprise is that in sufficiently high dimension, <i>all</i> points become support vectors &ndash; a phenomenon called <i>support vector proliferation</i>. The intuition is cleanest for isotropic features. When the entries of \(\mathbf{X}\) are i.i.d. with zero mean and unit variance, the Gram matrix concentrates as
+<p><i>A leave-one-out formula.</i> Fix a point \(i\), let \(\mathbf{X}_{-i}\) and \(\mathbf{y}_{-i}\) denote the data with point \(i\) removed, and let \(\mathbf{A}_{-i} = \mathbf{X}_{-i}\mathbf{X}_{-i}^\top\). Permuting point \(i\) to the last position and applying the block (Schur complement) inversion formula to \(\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}\) gives
 </p>
 <p style="text-align:center">
 \[
-\mathbf{X}\mathbf{X}^\top \approx d \, \mathbf{I}_n + \mathbf{E}, \qquad |\mathbf{E}_{ij}| = O(\sqrt{d}) \;\; \text{for } i \neq j,
+\beta_i = \frac{y_i - \mathbf{x}_i^\top \hat{\mathbf{v}}_{-i}}{\|\mathbf{x}_i\|_2^2 - \mathbf{x}_i^\top \mathbf{X}_{-i}^\top \mathbf{A}_{-i}^{-1} \mathbf{X}_{-i} \mathbf{x}_i}, \qquad \text{where} \quad \hat{\mathbf{v}}_{-i} := \mathbf{X}_{-i}^\top \mathbf{A}_{-i}^{-1} \mathbf{y}_{-i}
 \]
-</p><p>so that \(\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y} \approx \mathbf{y}/d\) and every \(y_i \beta_i \approx 1/d &gt; 0\). In effect, when \(d \gg n\), the training points are nearly orthogonal to each other, and no single point can be expressed economically in terms of the others &ndash; so every point must participate in the SVM solution. We now turn this intuition into an actual proof, following the arguments of [1, 2]. Throughout, assume the features are isotropic Gaussian, \(\mathbf{x}_i \overset{\text{i.i.d.}}{\sim} \mathcal{N}(\mathbf{0}, \mathbf{I}_d)\), while the label \(y_i\) is allowed to depend on \(\mathbf{x}_i\) arbitrarily.
-</p>
-<h3>Step 1: A leave-one-out criterion</h3>
-<p>By the Proposition, it suffices to verify condition (3) coordinate-wise. Fix a point \(i\), and let \(\mathbf{X}_{-i}\) and \(\mathbf{y}_{-i}\) denote the data with point \(i\) removed, with \(\mathbf{A}_{-i} = \mathbf{X}_{-i}\mathbf{X}_{-i}^\top\). Permuting point \(i\) to the last position and applying the block (Schur complement) inversion formula to \(\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}\) gives
-</p>
-<p style="text-align:center">
-\[
-\beta_i = \frac{y_i - \mathbf{x}_i^\top \hat{\mathbf{v}}_{-i}}{\|\mathbf{x}_i\|_2^2 - \mathbf{x}_i^\top \mathbf{X}_{-i}^\top \mathbf{A}_{-i}^{-1} \mathbf{X}_{-i} \mathbf{x}_i}, \qquad \text{where} \quad \hat{\mathbf{v}}_{-i} := \mathbf{X}_{-i}^\top \mathbf{A}_{-i}^{-1} \mathbf{y}_{-i}.
-\]
-</p><p>Two observations. First, \(\hat{\mathbf{v}}_{-i}\) is precisely the MNI trained on all points <i>except</i> \(i\): it is the leave-one-out predictor. Second, the denominator equals \(\|(\mathbf{I} - \mathbf{P}_{-i})\mathbf{x}_i\|_2^2\), where \(\mathbf{P}_{-i}\) is the orthogonal projection onto the span of the other points; since \(d &gt; n\), this is strictly positive almost surely. Hence the sign of \(\beta_i\) is the sign of the numerator, and multiplying by \(y_i\) (using \(y_i^2 = 1\)) yields the criterion
+</p><p>is the leave-one-out MNI, trained on all points except \(i\). The denominator equals \(\|(\mathbf{I} - \mathbf{P}_{-i})\mathbf{x}_i\|_2^2 &gt; 0\), where \(\mathbf{P}_{-i}\) is the orthogonal projection onto the span of the other points, so the sign of \(\beta_i\) is the sign of the numerator, and multiplying by \(y_i\) (using \(y_i^2 = 1\)) yields the criterion
 </p>
 <p style="text-align:center">
 \[
 y_i \beta_i &gt; 0 \quad \Longleftrightarrow \quad y_i \, \mathbf{x}_i^\top \hat{\mathbf{v}}_{-i} &lt; 1.
 \]
-</p><p>In words: <i>point \(i\) is a support vector if and only if the interpolator built from the other \(n-1\) points does not already predict its label with margin at least \(1\)</i>. Support vector proliferation is thus the statement that no training point is redundant &ndash; no point is already explained by the rest of the data.
-</p>
-<h3>Step 2: Concentration in high dimension</h3>
-<p>It remains to show that the leave-one-out predictions \(g_i := \mathbf{x}_i^\top \hat{\mathbf{v}}_{-i}\) are uniformly small. The key point is independence: since the samples are i.i.d., \(\mathbf{x}_i\) is independent of \((\mathbf{X}_{-i}, \mathbf{y}_{-i})\), and hence of \(\hat{\mathbf{v}}_{-i}\). Conditioning on the latter,
+</p><p><i>Concentration.</i> It remains to show that the leave-one-out predictions \(g_i := \mathbf{x}_i^\top \hat{\mathbf{v}}_{-i}\) are uniformly smaller than \(1\). Since the samples are i.i.d., \(\mathbf{x}_i\) is independent of \((\mathbf{X}_{-i}, \mathbf{y}_{-i})\), and hence of \(\hat{\mathbf{v}}_{-i}\). Conditioning on the latter,
 </p>
 <p style="text-align:center">
 \[
 g_i \mid (\mathbf{X}_{-i}, \mathbf{y}_{-i}) \;\sim\; \mathcal{N}\big(0, \|\hat{\mathbf{v}}_{-i}\|_2^2\big), \qquad \|\hat{\mathbf{v}}_{-i}\|_2^2 = \mathbf{y}_{-i}^\top \mathbf{A}_{-i}^{-1} \mathbf{y}_{-i} \leq \frac{n-1}{\lambda_{\min}(\mathbf{A}_{-i})}.
 \]
-</p><p>Standard bounds on the extreme singular values of Gaussian matrices give \(\lambda_{\min}(\mathbf{X}\mathbf{X}^\top) \geq (\sqrt{d} - C\sqrt{n})^2 \geq d/2\) with probability at least \(1 - e^{-cd}\) once \(d \gtrsim n\); by Cauchy's interlacing theorem, the same lower bound holds simultaneously for every principal submatrix \(\mathbf{A}_{-i}\). On this event, \(\|\hat{\mathbf{v}}_{-i}\|_2^2 \leq 2n/d\) for all \(i\): the leave-one-out predictor has tiny norm, because it must interpolate \(n-1\) nearly orthogonal points of unit label size. The Gaussian tail bound then gives, for each \(i\),
+</p><p>Standard bounds on the extreme singular values of Gaussian matrices give \(\lambda_{\min}(\mathbf{X}\mathbf{X}^\top) \geq (\sqrt{d} - c\sqrt{n})^2 \geq d/2\) with probability at least \(1 - e^{-c'd}\) once \(d \gtrsim n\); by Cauchy's interlacing theorem, the same lower bound holds simultaneously for every principal submatrix \(\mathbf{A}_{-i}\). On this event, \(\|\hat{\mathbf{v}}_{-i}\|_2^2 \leq 2n/d\) for all \(i\), and the Gaussian tail bound gives, for each \(i\),
 </p>
 <p style="text-align:center">
 \[
 \mathbb{P}\big( y_i g_i \geq 1 \big) \;\leq\; \mathbb{P}\big( |g_i| \geq 1 \big) \;\leq\; 2\exp\!\Big( -\frac{1}{2\|\hat{\mathbf{v}}_{-i}\|_2^2} \Big) \;\leq\; 2\exp\!\Big( -\frac{d}{4n} \Big),
 \]
-</p><p>where taking the absolute value conveniently sidesteps the dependence between \(y_i\) and \(\mathbf{x}_i\). Finally, a union bound over the \(n\) points:
+</p><p>where taking the absolute value sidesteps the dependence between \(y_i\) and \(\mathbf{x}_i\). Finally, taking a union bound over the \(n\) points, we get
 </p>
 <p style="text-align:center">
 \[
-\mathbb{P}\big( \exists i: \; y_i \beta_i \leq 0 \big) \;\leq\; 2n \exp\!\Big( -\frac{d}{4n} \Big) + e^{-cd} \;=\; 2\exp\!\Big( \log n -\frac{d}{4n} \Big) + e^{-cd},
+\mathbb{P}\big( \exists i: \; y_i \beta_i \leq 0 \big) \;\leq\; 2n \exp\!\Big( -\frac{d}{4n} \Big) + e^{-c'd} \;=\; 2\exp\!\Big( \log n -\frac{d}{4n} \Big) + e^{-c'd},
 \]
-</p><p>which vanishes as soon as \(d \geq 5 n \log n\). Thus \(d \gtrsim n \log n\) implies SVM \(=\) MNI with high probability. Note where the logarithmic factor entered: each individual point fails to be a support vector with probability \(e^{-\Theta(d/n)}\), and we pay a factor of \(n\) to control all points simultaneously.
+</p><p>which vanishes as soon as \(d \geq 5 n \log n\). \(\square\)
 </p>
-<h3>Step 3: Sharpness of the threshold</h3>
-<p>The union bound is not wasteful here. The variables \(g_i\) are nearly independent, each approximately \(\mathcal{N}(0, n/d)\), and the maximum of \(n\) independent Gaussians concentrates around \(\sqrt{2\log n}\) times the standard deviation:
+<h2>Note</h2>
+<ul>
+<li><p>Indeed, several works on generalization bounds for linear classification rely heavily on this condition, even though the required degree of overparametrization may be either milder or more stringent.
 </p>
-<p style="text-align:center">
-\[
-\max_i \, y_i g_i \;\approx\; \sqrt{\frac{2 n \log n}{d}}.
-\]
-</p><p>This quantity crosses the critical value \(1\) precisely at \(d \asymp n \log n\). Below this scaling, some point is predicted by the others with margin exceeding \(1\), that point fails to be a support vector, and SVM \(\neq\) MNI. Making this heuristic rigorous requires handling the dependence among the \(g_i\); this was done by Ardeshir et al. [3], who established a sharp phase transition around \(d \asymp n \log n\) for isotropic Gaussian features: above this scaling the two solutions coincide with high probability, and below it they differ with high probability. The logarithmic factor is therefore not an artifact of the proof technique &ndash; it is real.
+</li>
+</ul>
+<ul>
+<li><p>This result is quite useful. On the other hand, to analyze the solutions produced by many optimizers widely used in practice (e.g., Adam and spectral descent), we need to extend the discussion to minimum-norm solutions under general \(\ell_p\) geometries (which may be quite challenging).
 </p>
-<p>Beyond the isotropic case, Hsu et al. [2] extended the sufficient condition to anisotropic covariances (phrased in terms of effective dimensions), and Wang and Thrampoulidis [4] established support vector proliferation for Gaussian mixture data, where labels and features are dependent.
-</p>
-<h2>Why Is the Equivalence Useful for Generalization Analysis?</h2>
-<p>The equivalence is far more than a curiosity: it resolves a genuine analytical difficulty in understanding the generalization of interpolating classifiers.
-</p>
-<p>Directly analyzing the generalization of the max-margin SVM is hard, and the culprit is precisely the support vectors. The SVM solution is determined by <i>which</i> subset of the training points ends up on the margin, and this support set is a random object: it depends on the entire sample in a combinatorial, nonlinear way. As a consequence, there is no closed-form expression for \(\hat{\mathbf{w}}_{\text{SVM}}\) as a function of the data &ndash; to write the solution down one would first have to know the support set, and averaging over its randomness is intractable. Sharp, instance-specific risk computations of the kind needed to establish benign overfitting are therefore out of reach for the SVM taken on its own.
-</p>
-<p>The MNI suffers from none of these problems. It is an explicit <i>linear</i> function of the labels, \(\hat{\mathbf{w}}_{\text{MNI}} = \mathbf{X}^\top(\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}\), whose prediction risk admits an exact bias&ndash;variance decomposition and can be controlled with random matrix theory. This is exactly the route through which benign overfitting was characterized for minimum-norm regression by Bartlett et al. [5].
-</p>
-<p>Support vector proliferation bridges the two. In the regime \(d \gtrsim n \log n\), the randomness of the support set disappears &ndash; every point is a support vector &ndash; and the intractable variational object <i>is</i> the tractable closed-form one, so that every regression-style computation applies verbatim to the SVM. This is precisely the strategy of Muthukumar et al. [1], who showed that the interpolating classifier can achieve vanishing classification risk <i>even in settings where the corresponding regression risk does not vanish</i>: classification is, in this sense, easier than regression. Moreover, by the implicit bias result of Soudry et al. [6], gradient descent on the logistic loss converges in direction to the hard-margin SVM, so generalization guarantees obtained through this route apply to the classifiers actually found by gradient descent when trained to convergence.
-</p>
+</li>
+</ul>
 <h2>References</h2>
 <p>[1] Muthukumar et al., Classification vs. regression in overparameterized regimes: Does the loss function matter? <i>JMLR</i>, 2021.<br />
-[2] Hsu et al., On the proliferation of support vectors in high dimensions. <i>AISTATS</i>, 2021.<br />
-[3] Ardeshir et al., Support vector machines and linear regression coincide with very high-dimensional features. <i>NeurIPS</i>, 2021.<br />
-[4] Wang and Thrampoulidis, Binary classification of Gaussian mixtures: Abundance of support vectors, benign overfitting, and regularization. <i>SIAM Journal on Mathematics of Data Science</i>, 2022.<br />
-[5] Bartlett et al., Benign overfitting in linear regression. <i>PNAS</i>, 2020.<br />
-[6] Soudry et al., The implicit bias of gradient descent on separable data. <i>JMLR</i>, 2018.
-</p>
+[2] Hsu et al., On the proliferation of support vectors in high dimensions. <i>AISTATS</i>, 2021.</p>
 </td>
 </tr>
 </table>
