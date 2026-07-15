@@ -64,14 +64,60 @@ At first glance condition (2) looks restrictive: in the classical low-dimensiona
 The phenomenon that every training point becomes a support vector is called /support vector proliferation/. The intuition is cleanest for isotropic features. When the entries of $\mathbf{X}$ are i.i.d. with zero mean and unit variance, the Gram matrix concentrates as
 
 \(
-\mathbf{X}\mathbf{X}^\top \approx d \, \mathbf{I}_n + \mathbf{E}, \qquad \|\mathbf{E}_{ij}\| = O(\sqrt{d}) \;\; \text{for } i \neq j,
+\mathbf{X}\mathbf{X}^\top \approx d \, \mathbf{I}_n + \mathbf{E}, \qquad |\mathbf{E}_{ij}| = O(\sqrt{d}) \;\; \text{for } i \neq j,
 \)
 
-so that $\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y} \approx \mathbf{y}/d$. In this limit, every $y_i \beta_i \approx 1/d > 0$: the sign condition holds for every coordinate, and hence SVM $=$ MNI. In effect, when $d \gg n$, the training points are nearly orthogonal to each other, and no single point can be expressed economically in terms of the others -- so every point must participate in the SVM solution.
+so that $\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y} \approx \mathbf{y}/d$ and every $y_i \beta_i \approx 1/d > 0$. In effect, when $d \gg n$, the training points are nearly orthogonal to each other, and no single point can be expressed economically in terms of the others -- so every point must participate in the SVM solution. We now turn this intuition into an actual proof, following the arguments of \[1, 2\]. Throughout, assume the features are isotropic Gaussian, $\mathbf{x}_i \overset{\text{i.i.d.}}{\sim} \mathcal{N}(\mathbf{0}, \mathbf{I}_d)$, while the label $y_i$ is allowed to depend on $\mathbf{x}_i$ arbitrarily.
 
-Making this intuition precise requires controlling the fluctuation terms uniformly over all $n$ coordinates, and the union bound is exactly where an extra logarithmic factor enters. Muthukumar et al. \[1\] first identified the phenomenon and proved that for isotropic Gaussian features, SVM $=$ MNI holds with high probability once $d \gtrsim n \log n$. Hsu et al. \[2\] extended the sufficient condition to anisotropic settings (phrased in terms of effective dimensions of the covariance) and gave a partial converse. Ardeshir et al. \[3\] then settled the isotropic case, showing that support vector proliferation undergoes a sharp phase transition around $d \asymp n \log n$: above this scaling the two solutions coincide with high probability, and below it they differ with high probability. The logarithmic factor is therefore not an artifact of the proof technique -- it is real.
+=== Step 1: A leave-one-out criterion
 
-Analogous results hold beyond independent features; for instance, Wang and Thrampoulidis \[4\] established support vector proliferation and its consequences for Gaussian mixture data, where labels and features are dependent.
+By the Proposition, it suffices to verify condition (3) coordinate-wise. Fix a point $i$, and let $\mathbf{X}_{-i}$ and $\mathbf{y}_{-i}$ denote the data with point $i$ removed, with $\mathbf{A}_{-i} = \mathbf{X}_{-i}\mathbf{X}_{-i}^\top$. Permuting point $i$ to the last position and applying the block (Schur complement) inversion formula to $\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}$ gives
+
+\(
+\beta_i = \frac{y_i - \mathbf{x}_i^\top \hat{\mathbf{v}}_{-i}}{\|\mathbf{x}_i\|_2^2 - \mathbf{x}_i^\top \mathbf{X}_{-i}^\top \mathbf{A}_{-i}^{-1} \mathbf{X}_{-i} \mathbf{x}_i}, \qquad \text{where} \quad \hat{\mathbf{v}}_{-i} := \mathbf{X}_{-i}^\top \mathbf{A}_{-i}^{-1} \mathbf{y}_{-i}.
+\)
+
+Two observations. First, $\hat{\mathbf{v}}_{-i}$ is precisely the MNI trained on all points /except/ $i$: it is the leave-one-out predictor. Second, the denominator equals $\|(\mathbf{I} - \mathbf{P}_{-i})\mathbf{x}_i\|_2^2$, where $\mathbf{P}_{-i}$ is the orthogonal projection onto the span of the other points; since $d > n$, this is strictly positive almost surely. Hence the sign of $\beta_i$ is the sign of the numerator, and multiplying by $y_i$ (using $y_i^2 = 1$) yields the criterion
+
+\(
+y_i \beta_i > 0 \quad \Longleftrightarrow \quad y_i \, \mathbf{x}_i^\top \hat{\mathbf{v}}_{-i} < 1.
+\)
+
+In words: /point $i$ is a support vector if and only if the interpolator built from the other $n-1$ points does not already predict its label with margin at least $1$/. Support vector proliferation is thus the statement that no training point is redundant -- no point is already explained by the rest of the data.
+
+=== Step 2: Concentration in high dimension
+
+It remains to show that the leave-one-out predictions $g_i := \mathbf{x}_i^\top \hat{\mathbf{v}}_{-i}$ are uniformly small. The key point is independence: since the samples are i.i.d., $\mathbf{x}_i$ is independent of $(\mathbf{X}_{-i}, \mathbf{y}_{-i})$, and hence of $\hat{\mathbf{v}}_{-i}$. Conditioning on the latter,
+
+\(
+g_i \mid (\mathbf{X}_{-i}, \mathbf{y}_{-i}) \;\sim\; \mathcal{N}\big(0, \|\hat{\mathbf{v}}_{-i}\|_2^2\big), \qquad \|\hat{\mathbf{v}}_{-i}\|_2^2 = \mathbf{y}_{-i}^\top \mathbf{A}_{-i}^{-1} \mathbf{y}_{-i} \leq \frac{n-1}{\lambda_{\min}(\mathbf{A}_{-i})}.
+\)
+
+Standard bounds on the extreme singular values of Gaussian matrices give $\lambda_{\min}(\mathbf{X}\mathbf{X}^\top) \geq (\sqrt{d} - C\sqrt{n})^2 \geq d/2$ with probability at least $1 - e^{-cd}$ once $d \gtrsim n$; by Cauchy's interlacing theorem, the same lower bound holds simultaneously for every principal submatrix $\mathbf{A}_{-i}$. On this event, $\|\hat{\mathbf{v}}_{-i}\|_2^2 \leq 2n/d$ for all $i$: the leave-one-out predictor has tiny norm, because it must interpolate $n-1$ nearly orthogonal points of unit label size. The Gaussian tail bound then gives, for each $i$,
+
+\(
+\mathbb{P}\big( y_i g_i \geq 1 \big) \;\leq\; \mathbb{P}\big( |g_i| \geq 1 \big) \;\leq\; 2\exp\!\Big( -\frac{1}{2\|\hat{\mathbf{v}}_{-i}\|_2^2} \Big) \;\leq\; 2\exp\!\Big( -\frac{d}{4n} \Big),
+\)
+
+where taking the absolute value conveniently sidesteps the dependence between $y_i$ and $\mathbf{x}_i$. Finally, a union bound over the $n$ points:
+
+\(
+\mathbb{P}\big( \exists i: \; y_i \beta_i \leq 0 \big) \;\leq\; 2n \exp\!\Big( -\frac{d}{4n} \Big) + e^{-cd} \;=\; 2\exp\!\Big( \log n -\frac{d}{4n} \Big) + e^{-cd},
+\)
+
+which vanishes as soon as $d \geq 5 n \log n$. Thus $d \gtrsim n \log n$ implies SVM $=$ MNI with high probability. Note where the logarithmic factor entered: each individual point fails to be a support vector with probability $e^{-\Theta(d/n)}$, and we pay a factor of $n$ to control all points simultaneously.
+
+=== Step 3: Sharpness of the threshold
+
+The union bound is not wasteful here. The variables $g_i$ are nearly independent, each approximately $\mathcal{N}(0, n/d)$, and the maximum of $n$ independent Gaussians concentrates around $\sqrt{2\log n}$ times the standard deviation:
+
+\(
+\max_i \, y_i g_i \;\approx\; \sqrt{\frac{2 n \log n}{d}}.
+\)
+
+This quantity crosses the critical value $1$ precisely at $d \asymp n \log n$. Below this scaling, some point is predicted by the others with margin exceeding $1$, that point fails to be a support vector, and SVM $\neq$ MNI. Making this heuristic rigorous requires handling the dependence among the $g_i$; this was done by Ardeshir et al. \[3\], who established a sharp phase transition around $d \asymp n \log n$ for isotropic Gaussian features: above this scaling the two solutions coincide with high probability, and below it they differ with high probability. The logarithmic factor is therefore not an artifact of the proof technique -- it is real.
+
+Beyond the isotropic case, Hsu et al. \[2\] extended the sufficient condition to anisotropic covariances (phrased in terms of effective dimensions), and Wang and Thrampoulidis \[4\] established support vector proliferation for Gaussian mixture data, where labels and features are dependent.
 
 == Why Does This Matter?
 
