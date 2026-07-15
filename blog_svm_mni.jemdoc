@@ -27,11 +27,13 @@ Since $y_i \in \{\pm 1\}$, the interpolation constraint $\mathbf{w}^\top \mathbf
 \|\hat{\mathbf{w}}_{\text{SVM}}\|_2 \leq \|\hat{\mathbf{w}}_{\text{MNI}}\|_2.
 \)
 
-== When Are They Equal?
+The natural question is then: /when does equality actually hold?/
+
+== Support Vector Proliferation
 
 The KKT conditions of the SVM state that the solution takes the form $\hat{\mathbf{w}}_{\text{SVM}} = \sum_i \alpha_i y_i \mathbf{x}_i$ with dual variables $\alpha_i \geq 0$, and complementary slackness enforces $\alpha_i > 0$ only if the corresponding margin constraint is active, i.e., $y_i \, \hat{\mathbf{w}}_{\text{SVM}}^\top \mathbf{x}_i = 1$. Points with active constraints are the /support vectors/.
 
-The precise statement of the equivalence is the following \[1, 2\].
+The precise characterization of the equality is the following \[1, 2\].
 
 *Proposition.* Suppose $d \geq n$ and $\mathbf{X}$ has full row rank, and let $\boldsymbol{\beta} = (\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}$. Then the following are equivalent:
 
@@ -57,11 +59,7 @@ and set $\alpha_i := y_i \beta_i$. We claim that $(\hat{\mathbf{w}}_{\text{MNI}}
 
 /(1) $\Rightarrow$ (3)./ By the KKT conditions, $\hat{\mathbf{w}}_{\text{SVM}} = \sum_i \alpha_i y_i \mathbf{x}_i$ for some $\alpha_i \geq 0$. On the other hand, $\hat{\mathbf{w}}_{\text{MNI}} = \sum_i \beta_i \mathbf{x}_i$. If the two coincide, then $\sum_i (\alpha_i y_i - \beta_i) \, \mathbf{x}_i = \mathbf{0}$, and since $\mathbf{X}$ has full row rank the vectors $\{\mathbf{x}_i\}$ are linearly independent, so $\beta_i = \alpha_i y_i$ for every $i$. Multiplying by $y_i$ gives $y_i \beta_i = \alpha_i y_i^2 = \alpha_i \geq 0$. $\square$
 
-At first glance condition (2) looks restrictive: in the classical low-dimensional picture, only a few points near the decision boundary are support vectors. The surprise is that in sufficiently high dimension, /all/ points become support vectors.
-
-== Support Vector Proliferation
-
-The phenomenon that every training point becomes a support vector is called /support vector proliferation/. The intuition is cleanest for isotropic features. When the entries of $\mathbf{X}$ are i.i.d. with zero mean and unit variance, the Gram matrix concentrates as
+At first glance condition (2) looks restrictive: in the classical low-dimensional picture, only a few points near the decision boundary are support vectors. The surprise is that in sufficiently high dimension, /all/ points become support vectors -- a phenomenon called /support vector proliferation/. The intuition is cleanest for isotropic features. When the entries of $\mathbf{X}$ are i.i.d. with zero mean and unit variance, the Gram matrix concentrates as
 
 \(
 \mathbf{X}\mathbf{X}^\top \approx d \, \mathbf{I}_n + \mathbf{E}, \qquad |\mathbf{E}_{ij}| = O(\sqrt{d}) \;\; \text{for } i \neq j,
@@ -119,17 +117,15 @@ This quantity crosses the critical value $1$ precisely at $d \asymp n \log n$. B
 
 Beyond the isotropic case, Hsu et al. \[2\] extended the sufficient condition to anisotropic covariances (phrased in terms of effective dimensions), and Wang and Thrampoulidis \[4\] established support vector proliferation for Gaussian mixture data, where labels and features are dependent.
 
-== Why Does This Matter?
+== Why Is the Equivalence Useful for Generalization Analysis?
 
-The equivalence is far more than a curiosity; it has become a standard workhorse in the theory of benign overfitting, for two main reasons.
+The equivalence is far more than a curiosity: it resolves a genuine analytical difficulty in understanding the generalization of interpolating classifiers.
 
-=== Classification analysis reduces to regression analysis
+Directly analyzing the generalization of the max-margin SVM is hard, and the culprit is precisely the support vectors. The SVM solution is determined by /which/ subset of the training points ends up on the margin, and this support set is a random object: it depends on the entire sample in a combinatorial, nonlinear way. As a consequence, there is no closed-form expression for $\hat{\mathbf{w}}_{\text{SVM}}$ as a function of the data -- to write the solution down one would first have to know the support set, and averaging over its randomness is intractable. Sharp, instance-specific risk computations of the kind needed to establish benign overfitting are therefore out of reach for the SVM taken on its own.
 
-The max-margin SVM is defined variationally and is generally hard to analyze directly, whereas the MNI has an explicit closed form amenable to random matrix analysis. Once SVM $=$ MNI, any risk analysis of the minimum-norm least-squares interpolator -- such as the benign overfitting characterization of Bartlett et al. \[5\] -- can be imported to study the classification error of the SVM. This is precisely the route taken by Muthukumar et al. \[1\], who showed that in certain overparametrized regimes the interpolating classifier achieves vanishing classification risk /even in settings where the corresponding regression risk does not vanish/: classification is, in this sense, easier than regression.
+The MNI suffers from none of these problems. It is an explicit /linear/ function of the labels, $\hat{\mathbf{w}}_{\text{MNI}} = \mathbf{X}^\top(\mathbf{X}\mathbf{X}^\top)^{-1}\mathbf{y}$, whose prediction risk admits an exact bias--variance decomposition and can be controlled with random matrix theory. This is exactly the route through which benign overfitting was characterized for minimum-norm regression by Bartlett et al. \[5\].
 
-=== The loss function does not matter
-
-Recall the implicit bias result of Soudry et al. \[6\]: gradient descent on separable data with the logistic (or any exponential-tail) loss converges in direction to the hard-margin SVM. Combining this with the equivalence above yields a striking conclusion for the overparametrized regime: training a linear classifier with the logistic loss (run to convergence) and simply performing minimum-norm least-squares regression on the $\pm 1$ labels produce /the same classifier direction/. In the heavily overparametrized regime, the choice between the two most common training losses -- cross-entropy and squared loss -- is immaterial to the solution found, which is exactly the message of the title of \[1\].
+Support vector proliferation bridges the two. In the regime $d \gtrsim n \log n$, the randomness of the support set disappears -- every point is a support vector -- and the intractable variational object /is/ the tractable closed-form one, so that every regression-style computation applies verbatim to the SVM. This is precisely the strategy of Muthukumar et al. \[1\], who showed that the interpolating classifier can achieve vanishing classification risk /even in settings where the corresponding regression risk does not vanish/: classification is, in this sense, easier than regression. Moreover, by the implicit bias result of Soudry et al. \[6\], gradient descent on the logistic loss converges in direction to the hard-margin SVM, so generalization guarantees obtained through this route apply to the classifiers actually found by gradient descent when trained to convergence.
 
 == References
 
