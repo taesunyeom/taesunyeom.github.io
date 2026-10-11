@@ -14,6 +14,11 @@ Before joining EffL, I received my bachelor's degree in Mechanical Engineering f
 
 == Publications
 
+- *When Less Data Favors Smaller Teachers: Rethinking Teacher Capacity and Data Selection for Knowledge Distillation*\n
+  Minjae Park, *Taesun Yeom*, and Jaeho Lee\n
+  /Under review/, 2026\n
+  [https://arxiv.org/abs/2609.34489 arxiv]
+
 - *Over-Alignment vs Over-Fitting: The Role of Feature Learning Strength in Generalization*\n
   *Taesun Yeom*, Taehyeok Ha, and Jaeho Lee\n
   /ICML/, 2026\n
@@ -73,3 +78,4 @@ Before joining EffL, I received my bachelor's degree in Mechanical Engineering f
 == Services
 
 - Reviewer for NeurIPS, ICML, ECCV, IEEE journals.
+-- Top Reviewer at NeurIPS 2026, Silver Reviewer at ICML 2026
